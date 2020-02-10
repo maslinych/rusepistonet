@@ -137,13 +137,12 @@ def morph_to_ip(_cell):
 
         logging.info(p.tag)
         if test_tag_list(keys_poss_fio, p.tag) or test_match_hard(word):
-        # Смотрим что это слово или сложное для детектирования слово, и не союз (хотя не помогает такая проверка, потому что теги значимей)
+        # Смотрим что это слово или сложное для детектирования слово
             if p.inflect({'sing','nomn'}):
                 res=p.inflect({'sing','nomn'}).word # приводим слово в И.П. единственное число
             else:
                 res=""
-            if res != r'и': # если не союз И - делаем первые буквы заглавными
-                res=res.title()
+            res=res.title()
 
             if HasEndComma: # если была запятая - возвращаем
                 res=res+','
@@ -157,25 +156,27 @@ def morph_to_ip(_cell):
             else:
                 words.append(word)
 
-    rescell.value=' '.join(words) #Записываем в ячейку результата найденные слова в И.П. единственное число
+    return ' '.join(words) #Возвращаем в качестве результата найденные слова в И.П. единственное число
 
 
 def main():
 
-    with open("../data/muratova.csv") as datafile:
-        reader = csv.DictReader(datafile, delimiter=',')
+    with open("../data/muratova.csv", newline='', encoding='utf-8-sig') as datafile:
+        reader = csv.DictReader(datafile, delimiter=';')
+        res_fieldnames=reader.fieldnames+[rescol]
+        with open("../data/muratova_res.csv", "w", newline='', encoding='utf-8-sig') as resfile:
+            writer = csv.DictWriter(resfile, fieldnames=res_fieldnames, delimiter=';')
+            writer.writeheader()
         for line in reader:
             cell=line[sourcecol]
+            if not cell: # пропускаем пустые ячейки
+                continue          
             person_ip=morph_to_ip(cell)
-
-    for rownum in range(sourcerowstart,sourcerowend):
-    # цикл от sourcerowstart до sourcerowend
-        cell=xw.Range(sourcecol+str(rownum)).value # получаем значение ячейки
-        rescell=xw.Range(rescol+str(rownum)) # получаем целевую ячейку для записи в конце итерации
-        if not cell: # пропускаем пустые ячейки
-            continue
- 
-        #rescellQ.value=get_qnumber(wikisearch=author.replace(',','').strip(), wikisite="wikidatawiki")
+            res_line=line
+            res_line[rescol]=person_ip
+            with open("../data/muratova_res.csv", "a", newline='', encoding='utf-8-sig') as resfile:
+                writer = csv.DictWriter(resfile, fieldnames=res_fieldnames, delimiter=';')
+                writer.writerow(res_line)
 
 
 if __name__ == '__main__':
