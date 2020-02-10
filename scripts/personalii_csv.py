@@ -1,38 +1,21 @@
 # Зависимости
 # Python 3.8 https://www.python.org/downloads/
-# Ms Excel
-# pip install xlwings
 # pip install pymorphy2
 # pip install -U pymorphy2-dicts-ru
-#
-# Грязный хак без которого xlwings не заработал:
-# в папке где установлен Python - скопировать dll-ки из Lib/site-packages/pywin32_system32 в Lib\site-packages\win32
-# файлы примерно: pythoncom38.dll и pywintypes38.dll
-#
-# Установка панели xlwings в Excel - xlwings addin install
-# Скрипт должен находиться в одной папке в документом excel и называться также, кроме расширения
-# перечень.xslx перечень.py
 
 import pymorphy2
-import xlwings as xw
 import re
 import logging
-import time
-
-from xlwings.constants import InsertShiftDirection
-from requests import get
+import csv
 
 # Логирование в utf-8 для отладки 
 logging.basicConfig(handlers=[logging.FileHandler(r"xlwings.log", 'w', 'utf-8')], level=logging.INFO)
 
-# Запуск анализватора морф
+# Запуск анализатора морф
 morph = pymorphy2.MorphAnalyzer()
 
-sourcecol = 'K' # Столбец со строками для обработки
-sourcerowstart = 2 # первая и последняя строка для обработки
-sourcerowend = 6829
-rescol = chr(ord(sourcecol) + 1) # столбец куда надо будет записать данные
-rescolQ = chr(ord(rescol) + 1) # столбец куда надо будет записать данные
+sourcecol = 'персоналии' # Столбец со строками для обработки
+rescol = 'персонали_Ип' # столбец куда надо будет записать данные
 
 IOdot = re.compile(r'[А-Я]\.') # регулярное выражение для определения И. О.
 EndComma = re.compile(r',$') # запятые в конце слов
@@ -60,48 +43,13 @@ def test_match_hard(_word):
         if result:
             return True
 
-#get_qnumber(wikisearch="Шелгунов Николай Васильевич", wikisite="wikidatawiki")
-def get_qnumber(wikisearch, wikisite):
-
-    author=wikisearch.split()
-    if len(author)==1:
-        return ""
-    variants=[]
-    variants.append(" ".join(author))
-    if len(author)>2:
-        if author[2].endswith('.'):
-            return ""
-        if author[0]==r"Маркс":
-            variants.append(" ".join([author[1],author[0]]))
-            variants.append(" ".join([author[0],author[1]]))
-        variants.append(" ".join([author[0],author[1],author[2]]))
-        variants.append(" ".join([author[0]+",",author[1],author[2]]))
-        variants.append(" ".join([author[0],author[2],author[1]]))
-        variants.append(" ".join([author[1],author[2],author[0]]))
-    # if len(author)>1:
-    #     if author[1].endswith('.'):
-    #         return ""
-    #     variants.append(" ".join([author[0],author[1]]))
-    #     variants.append(" ".join([author[1],author[0]]))
-
-    for var in variants:
-        #time.sleep(1)
-        logging.info(str(var))
-        resp = get('https://www.wikidata.org/w/api.php', {
-            'action': 'wbsearchentities',
-            'search': var,
-            'props': '',
-            'language': 'ru',
-            'format': 'json',
-            'formatversion': '2'
-        }).json()
-        logging.info(str(resp))
-        if len(resp['search'])>0:
-            return resp['search'][0]['id']
-    return ""
-
-# Функция которая запускается из excel            
 def main():
+
+    with open("../data/muratova.csv") as datafile:
+        reader = csv.DictReader(datafile, delimiter=',')
+        for line in reader:
+            print(line["first_name"]),
+            print(line["last_name"])
 
     if xw.Range(sourcecol+str(1)).value != r'персоналии':
         raise AssertionError(r'Проверьте переменную sourcecol - заголовок столбца '+sourcecol+'не "персоналии"')
@@ -109,10 +57,6 @@ def main():
     if xw.Range(rescol+str(1)).value != r'персоналииИП':
         xw.Range(rescol+":"+rescol).api.Insert(InsertShiftDirection.xlShiftToRight)
         xw.Range(rescol+str(1)).value=r'персоналииИП'
-
-    if xw.Range(rescolQ+str(1)).value != r'персоналииQ':
-        xw.Range(rescolQ+":"+rescolQ).api.Insert(InsertShiftDirection.xlShiftToRight)
-        xw.Range(rescolQ+str(1)).value=r'персоналииQ'
 
     for rownum in range(sourcerowstart,sourcerowend):
     # цикл от sourcerowstart до sourcerowend
@@ -244,4 +188,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    xw.serve()
