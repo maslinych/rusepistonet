@@ -1,17 +1,4 @@
-# Зависимости
 # Python 3.8 https://www.python.org/downloads/
-# Ms Excel
-# pip install xlwings
-# pip install pymorphy2
-# pip install -U pymorphy2-dicts-ru
-#
-# Грязный хак без которого xlwings не заработал:
-# в папке где установлен Python - скопировать dll-ки из Lib/site-packages/pywin32_system32 в Lib\site-packages\win32
-# файлы примерно: pythoncom38.dll и pywintypes38.dll
-#
-# Установка панели xlwings в Excel - xlwings addin install
-# Скрипт должен находиться в одной папке в документом excel и называться также, кроме расширения
-# перечень.xslx перечень.py
 
 import csv
 import re
