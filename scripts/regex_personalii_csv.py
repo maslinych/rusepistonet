@@ -17,8 +17,7 @@ logging.basicConfig(handlers=[logging.FileHandler(r"xlwings.log", 'w', 'utf-8')]
 morph = pymorphy2.MorphAnalyzer()
 
 sourcecol = 'персоналии' # Столбец со строками для обработки
-rescol = 'персонали_Ип' # столбец куда надо будет записать данные
-rescol_prim = 'персоналии_примечание' # Столбец для примечаний (содержимое скобок)
+rescols = ['адресат', 'количество писем', 'даты'] # столбцы куда надо будет записать данные
 
 IOdot = re.compile(r'^[А-ЯЁ]\.$') # регулярное выражение для определения И. О.
 MultiIO = re.compile(r'^[А-ЯЁ]\. [А-ЯЁ]\.,$') # регулярное выражение для определения И. О.
@@ -55,17 +54,27 @@ def safe_list_get (l, idx, default):
     except IndexError:
         return default
 
-def extract_person(_celldata):
-    res_cell=re.search(r'^(.*)\([0-9?]+\)',_celldata, re.IGNORECASE)
+def extract_data(_celldata):
+    res_cell=re.search(r'^(.*)\.?.?\(([0-9?]*)\).?\.?.?(.*)\.?$',_celldata, re.IGNORECASE)
     if res_cell:
-        res_cell=res_cell.group(1)
+        person=res_cell.group(1)
+        letters_count=res_cell.group(2)
+        dates=res_cell.group(3)
+
+        if person:
+            person=person.strip()
+            if person.endswith('.'):
+                person=person[:-1]
+            person=re.sub(r"\s\s+", " ", person)
+        if dates:
+            dates=dates.strip()
+            if re.findall(r'[.,;]$',dates):
+                dates=dates[:-1]
+            dates=re.sub(r"\s\s+", " ", dates)
     else:
-        return ""
-    res_cell=res_cell.strip()
-    if res_cell.endswith('.'):
-        res_cell=res_cell[:-1]
-    res_cell=re.sub(r"\s\s+", " ", res_cell)
-    return res_cell
+        return ["","",""]
+
+    return [person,letters_count,dates]
 
 def convert_to_ip(_person):
     lst = _person.split() # разделяем ячейку на отдельные слова
@@ -147,7 +156,7 @@ def main():
 
     with open(infile, newline='', encoding='utf-8-sig') as datafile:
         reader = csv.DictReader(datafile, delimiter=';')
-        res_fieldnames=reader.fieldnames+[rescol]
+        res_fieldnames=reader.fieldnames+rescols
         with open(outfile, "w", newline='', encoding='utf-8-sig') as resfile:
             writer = csv.DictWriter(resfile, fieldnames=res_fieldnames, delimiter=';')
             writer.writeheader()
@@ -155,12 +164,11 @@ def main():
             cell=line[sourcecol]
             if not cell: # пропускаем пустые ячейки
                 continue          
-            extracted_person=extract_person(cell)
-            if not extracted_person:
-                continue
-            person_ip=convert_to_ip(extracted_person)
+            extracted_data=extract_data(cell)
+            #person_ip=convert_to_ip(extracted_person)
             res_line=line
-            res_line[rescol]=person_ip
+            for num,col in enumerate(rescols, start=0):
+                res_line[col]=extracted_data[num]
             with open(outfile, "a", newline='', encoding='utf-8-sig') as resfile:
                 writer = csv.DictWriter(resfile, fieldnames=res_fieldnames, delimiter=';')
                 writer.writerow(res_line)
