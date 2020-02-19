@@ -55,7 +55,7 @@ def safe_list_get (l, idx, default):
         return default
 
 def extract_data(_celldata):
-    res_cell=re.search(r'^(.*)\.?.?\(([0-9?]*)\).?\.?.?(.*)\.?$',_celldata, re.IGNORECASE)
+    res_cell=re.search(r'^(.*)\.?.?\(([ 0-9?><]*)\).?\.?.?(.*)\.?$',_celldata, re.IGNORECASE)
     if res_cell:
         person=res_cell.group(1)
         letters_count=res_cell.group(2)
@@ -162,10 +162,10 @@ def main():
             writer.writeheader()
         for line in reader:
             cell=line[sourcecol]
-            if not cell: # пропускаем пустые ячейки
-                continue          
-            extracted_data=extract_data(cell)
-            #person_ip=convert_to_ip(extracted_person)
+            if cell: 
+                extracted_data=extract_data(cell)
+            else:
+                extracted_data=["","",""]
             res_line=line
             for num,col in enumerate(rescols, start=0):
                 res_line[col]=extracted_data[num]
