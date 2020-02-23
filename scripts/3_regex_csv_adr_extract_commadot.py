@@ -12,7 +12,7 @@ def extract_data_person2(_celldata):
     commadot=_celldata.split(';')
     res_persons=[]
     for cd_part in commadot:
-        res_persons.append(cd_part)
+        res_persons.append( { rescols[0] : cd_part } )
     return res_persons
 
 def main():
@@ -37,9 +37,9 @@ def main():
             if cell: 
                 extracted_data=extract_data_person2(cell)
             else:
-                extracted_data=[""]
+                extracted_data=[{ rescols[0] : "" }]
             for one_data in extracted_data:
-                line.update({rescols[0]:one_data})
+                line.update(one_data)
                 with open(outfile, "a", newline='', encoding='utf-8-sig') as resfile:
                     writer = csv.DictWriter(resfile, fieldnames=res_fieldnames, delimiter=';')
                     writer.writerow(line)

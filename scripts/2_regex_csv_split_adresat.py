@@ -16,8 +16,6 @@ def extract_data_person(_celldata):
 
         if person:
             person=person.strip()
-            if person.endswith('.'):
-                person=person[:-1]
             
         if prim:
             prim=prim.strip()

@@ -16,8 +16,9 @@ def extract_data_person2(_celldata):
         res_persons.append(_celldata)
         return res_persons
     if '.,' in _celldata:
-        lio=innerparts[-1].strip().split(' ')[:-1]
-        lfam=innerparts[-1].strip().split(' ')[-1]
+        clear_right_part=innerparts[-1].strip().split(' ')
+        lio=clear_right_part[:-1]
+        lfam=clear_right_part[-1]
         io_parts=innerparts[:-1]+[' '.join(lio)]
         for in_part in io_parts:
             res_persons.append(' '.join([in_part.strip(),lfam]))
