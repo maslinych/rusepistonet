@@ -1,7 +1,5 @@
 # Зависимости
 # Python 3.8 https://www.python.org/downloads/
-# pip install pymorphy2
-# pip install -U pymorphy2-dicts-ru
 
 import re
 import csv
@@ -9,12 +7,6 @@ import argparse
 
 sourcecol = 'адресат_тчкзпт' # Столбец со строками для обработки
 rescols = ['адресат_одиночн'] # столбцы куда надо будет записать данные
-
-def safe_list_get (l, idx, default):
-    try:
-        return l[idx]
-    except IndexError:
-        return default
 
 def extract_data_person2(_celldata):
     res_persons=[]
@@ -57,13 +49,11 @@ def main():
                 extracted_data=extract_data_person2(cell)
             else:
                 extracted_data=[""]
-            res_line=line
             for one_data in extracted_data:
-                for num,col in enumerate(rescols, start=0):
-                    res_line[col]=one_data
+                line.update({rescols[0]:one_data})
                 with open(outfile, "a", newline='', encoding='utf-8-sig') as resfile:
                     writer = csv.DictWriter(resfile, fieldnames=res_fieldnames, delimiter=';')
-                    writer.writerow(res_line)
+                    writer.writerow(line)
 
 
 if __name__ == '__main__':
