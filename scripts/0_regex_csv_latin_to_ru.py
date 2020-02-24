@@ -25,6 +25,7 @@ def replace_lat_rus(_celldata):
     for key, value in replacement.items():
         _celldata=re.sub(r" {}".format(key)," {}".format(value),_celldata)
         _celldata=re.sub(r"^{}".format(key),"{}".format(value),_celldata)
+    _celldata=re.sub(r'(?:(?<!Вып\.)(?<!вып\.)(?<!кн\.) 3\.) ([А-ЯЁ][а-яё\-]+)', r' З. \1', _celldata)
     return _celldata
 
 
