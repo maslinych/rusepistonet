@@ -1,4 +1,4 @@
-# Зависимости
+ # Зависимости
 # Python 3.8 https://www.python.org/downloads/
 
 import re
@@ -16,12 +16,11 @@ def extract_data_person2(_celldata):
         res_persons.append(_celldata)
         return res_persons
     if '.,' in _celldata:
-        clear_right_part=innerparts[-1].strip().split(' ')
-        lio=clear_right_part[:-1]
-        lfam=clear_right_part[-1]
+        lio=rightparts[:-1]
+        lfam=rightparts[-1]
         io_parts=innerparts[:-1]+[' '.join(lio)]
         for in_part in io_parts:
-            res_persons.append(' '.join([in_part.strip(),lfam]))
+            res_persons.append(in_part.strip()+' '+lfam)
     else:
         for in_part in innerparts:
             res_persons.append(in_part)
