@@ -23,7 +23,7 @@ def extract_data_person2(_celldata):
             res_persons.append(in_part.strip()+' '+lfam)
     else:
         for in_part in innerparts:
-            res_persons.append(in_part)
+            res_persons.append(in_part.strip())
     return res_persons
 
 def main():
