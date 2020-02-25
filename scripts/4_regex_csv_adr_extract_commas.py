@@ -12,7 +12,8 @@ def extract_data_person2(_celldata):
     res_persons=[]
     innerparts=_celldata.split(',')
     rightparts=innerparts[-1].strip().split(' ')
-    if len(rightparts)>3:
+    if len(rightparts)>3 and not( '.' in ' '.join(innerparts[:-1])):
+        # not( '.' in ' '.join(innerparts[:-1]))): -  for  'В. И. Баксту, другим организаторам Гейдельбергской читальни'
         res_persons.append(_celldata)
         return res_persons
     if '.,' in _celldata:
