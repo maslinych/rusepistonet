@@ -3,7 +3,8 @@ df <- fread("data/muratova_res6.csv", encoding = "UTF-8")
 # creating target from surname + initials
 df$target <- paste(df$адресатИП, df$адресат_ио, sep = " ")
 # creating a year
-df$year <- paste0(str_extract_all(df$даты, "1\\d+")[[1]], collapse = ";")
+df$year <- str_extract_all(df$даты, "1\\d+")
+# sapply(df$year, paste, collapse = "-") - to create vector
 # take significant variables
 df <- select(df, -"адресат", -"даты", -names(df)[13:19])
 names(df) <- c("source", "affiliation", "publish", "year_of_publish", "form_of_publish", "one-two-sided", "personas", "comments", "e-source", "n-letters", "target", "year")
@@ -43,7 +44,7 @@ for (i in 1:nrow(df)) {
   for (k in 1:length(tmp_titles)) {
     try(if(
       eval(parse(text = str_c("tmp2$", tmp_titles[k], "$claims$P31[[1]]$mainsnak$datavalue$value$id")))=="Q5"
-      & as.integer(str_extract(eval(parse(text = str_c("tmp2$", tmp_titles[k], "$claims$P569[[1]]$mainsnak$datavalue$value$time"))), "1\\d+"))+10<=df$year[i]
+      & as.integer(str_extract(eval(parse(text = str_c("tmp2$", tmp_titles[k], "$claims$P569[[1]]$mainsnak$datavalue$value$time"))), "1\\d+"))+15<=df$year[i]
       & as.integer(str_extract(eval(parse(text = str_c("tmp2$", tmp_titles[k], "$claims$P570[[1]]$mainsnak$datavalue$value$time"))), "1\\d+"))>=df$year[i]
       ) ids[k] = tmp_titles[k], silent = T)
   }
@@ -77,7 +78,7 @@ for (i in 1:nrow(df)) {
   for (k in 1:length(tmp_titles)) {
     try(if(
       eval(parse(text = str_c("tmp2$", tmp_titles[k], "$claims$P31[[1]]$mainsnak$datavalue$value$id")))=="Q5"
-      & as.integer(str_extract(eval(parse(text = str_c("tmp2$", tmp_titles[k], "$claims$P569[[1]]$mainsnak$datavalue$value$time"))), "1\\d+"))+10<=df$year[i]
+      & as.integer(str_extract(eval(parse(text = str_c("tmp2$", tmp_titles[k], "$claims$P569[[1]]$mainsnak$datavalue$value$time"))), "1\\d+"))+15<=df$year[i]
       & as.integer(str_extract(eval(parse(text = str_c("tmp2$", tmp_titles[k], "$claims$P570[[1]]$mainsnak$datavalue$value$time"))), "1\\d+"))>=df$year[i]
     ) ids[k] = tmp_titles[k], silent = T)
   }
@@ -87,5 +88,7 @@ for (i in 1:nrow(df)) {
 
 df$source_wkid <- str_extract_all(df$source_wkid, "Q\\d+")
 df$target_wkid <- str_extract_all(df$target_wkid, "Q\\d+")
+# sapply(df$source_wkid, paste, collapse = "?") - to create vector
+
 # creating new enriched database
 fwrite(df, file = "data/enriched_data.csv")
