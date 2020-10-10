@@ -18,7 +18,12 @@ def extract_data(_celldata):
     .* - любое количество любых символов
     re.IGNORECASE - флаг, игнорирование регистра
     '''
-    adr=res_cell.group(1)
+    try:
+        adr=res_cell.group(1)
+    except:
+        print(_celldata)
+        exit(0)
+
     if re.search(r'\w\. \w$',adr):
         adr=adr+'.'
     if res_cell:
