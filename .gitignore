@@ -4,3 +4,5 @@
 .Ruserdata
 muratova_res*
 *.log
+.vscode
+*.Rproj
