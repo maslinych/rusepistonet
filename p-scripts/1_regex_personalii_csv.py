@@ -22,8 +22,9 @@ def extract_data(_celldata):
         adr=res_cell.group(1)
     except:
         print(_celldata)
-        exit(0)
 
+    res_cell=''
+    adr=''
     if re.search(r'\w\. \w$',adr):
         adr=adr+'.'
     if res_cell:
