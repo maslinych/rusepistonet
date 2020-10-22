@@ -264,7 +264,7 @@ def main():
         reader = csv.DictReader(datafile, delimiter=';')
         res_fieldnames=reader.fieldnames+rescols
         with open(outfile, "w", newline='', encoding='utf-8') as resfile:
-            writer = csv.DictWriter(resfile, fieldnames=res_fieldnames, delimiter=';')
+            writer = csv.DictWriter(resfile, fieldnames=res_fieldnames, delimiter=';', quoting=csv.QUOTE_NONNUMERIC)
             writer.writeheader()
         for line in reader:
             cell=line[sourcecol]
@@ -275,7 +275,7 @@ def main():
 
             line.update(extracted_data)
             with open(outfile, "a", newline='', encoding='utf-8') as resfile:
-                writer = csv.DictWriter(resfile, fieldnames=res_fieldnames, delimiter=';')
+                writer = csv.DictWriter(resfile, fieldnames=res_fieldnames, delimiter=';', quoting=csv.QUOTE_NONNUMERIC)
                 writer.writerow(line)
 
 
