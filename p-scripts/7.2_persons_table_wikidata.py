@@ -19,7 +19,7 @@ logging.basicConfig(
 
 
 # столбцы со строками для обработки
-sourcecols = ['fio_full', 'fio_short']
+sourcecols = ['fio_full', 'fio_short', 'fam_orig', 'io_short']
 
 rescols = ['wikidata_id', 'wikidata_url']
 
@@ -169,8 +169,14 @@ def main():
                 to_search = line[sourcecols[0]]
             else:
                 to_search = line[sourcecols[1]]
+            mult=re.search(r'[ыи]м$',line[sourcecols[2]])
+            if mult:
+                to_search = f"{line[sourcecols[2]][:-2]}* {line[sourcecols[3]]}"
+            stopword=re.search(r'[«»]', line[sourcecols[2]])
+            unknown=re.search(r'еизвес', line[sourcecols[2]])
+           
             row['wikidata_id'], row['wikidata_url'] = ['','']
-            if (len(to_search)>2):
+            if (len(to_search)>2) and not (stopword or unknown):
                 search_res = get_qnumbers(to_search)
                 if search_res:
                     row['wikidata_id'], row['wikidata_url'] = select_entity(search_res)

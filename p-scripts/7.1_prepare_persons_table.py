@@ -22,11 +22,11 @@ logging.basicConfig(
 
 
 # столбцы со строками для обработки
-sourcecols = ['автор', 'адресат_ио', 'адресатИП']
+sourcecols = ['автор', 'адресат_ио', 'адресатИП', 'фамилия_неделимо']
 #rescols = ['authorwikidataurl', 'authorwikidataid', 'adrwikidataurl',
            #'adrwikidataid']  # столбцы, куда надо будет записать данные
 
-rescols = ['source', 'fam', 'io', 'io_short', 'fam_single', 'fio_full', 'fio_short', 'wikidata_id','wikidata_url']
+rescols = ['source', 'fam', 'io', 'io_short', 'fam_single', 'fam_orig', 'fio_full', 'fio_short', 'wikidata_id','wikidata_url']
 
 # Запуск анализатора морф
 morph = pymorphy2.MorphAnalyzer()
@@ -212,6 +212,7 @@ def main():
                 row['fio_short'] = row['fam']+', '+ioshort
                 # Фамилия в единственном числе - тут совпадает просто с фамилией
                 row['fam_single'] = row['fam']
+                row['fam_orig'] = row['fam']
                 # Под данные с викидата
                 row['wikidata_id'] = ''
                 row['wikidata_url'] = ''
@@ -235,11 +236,12 @@ def main():
                 row['source'] = dest
                 # только фамилия "как есть"
                 row['fam'] = dest_fam
+                row['fam_orig'] = line[sourcecols[3]]
                 # только инициалы
                 row['io'] = dest_io
                 row['io_short'] = dest_io
                 # фамилия в единственном числе, прогоняем через pymorphy
-                row['fam_single'] = convert_to_sing(row['fam'])
+                row['fam_single'] = convert_to_sing(row['fam'])\
                 # Полное имя неизвестно на данном этапе - у адресатов только инициалы
                 row['fio_full'] = ''
                 # зато Фамилия, И. О. у нас уже есть
