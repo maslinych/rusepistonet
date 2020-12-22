@@ -10,8 +10,10 @@ import csv
 import argparse
 #import datetime
 from dateutil.parser import parse
-
 from requests import get
+import hashlib
+import uuid
+import os
 
 # Логирование в utf-8 для отладки
 logging.basicConfig(
@@ -41,8 +43,10 @@ def safe_list_get(l, idx, default):
     except IndexError:
         return default
 
-#get_qnumber(wikisearch="Шелгунов Николай Васильевич", wikisite="wikidatawiki")
-
+def generate_string_id(_input):
+    salt = uuid.uuid4().hex
+    hash_obj = hashlib.sha1(salt.encode()+str(_input).encode())
+    return hash_obj.hexdigest()
 
 def get_qnumbers(search):
 
@@ -96,7 +100,10 @@ def get_year(wikidate):
 # wikidata_query.get_qnumber_sparql(
 #                wikisearch=author, birthdate_begin="1800", birthdate_end="1899")
 
+ent_count=0
+
 def select_entity(entities):
+    global ent_count
     resp_code = 0
     join_entities = '|'.join(entities)
     while resp_code != 200:
@@ -140,11 +147,13 @@ def select_entity(entities):
                 if not(P569birthdate or P570deathdate):
                     continue
                 return [wid, 'https://www.wikidata.org/wiki/'+wid]
-
-    return ['', '']
+    ent_count=ent_count+1
+    id='random_id'+generate_string_id(ent_count)
+    return [id, id]
 
 
 def main():
+    global ent_count
 
     parser = argparse.ArgumentParser(
         prog='Wikidata search', description='Search persons in wikidata')
@@ -180,6 +189,11 @@ def main():
                 search_res = get_qnumbers(to_search)
                 if search_res:
                     row['wikidata_id'], row['wikidata_url'] = select_entity(search_res)
+
+            if not row['wikidata_id']:
+                ent_count=ent_count+1
+                id='random_id'+generate_string_id(ent_count)
+                row['wikidata_id'], row['wikidata_url'] = [id, id]
 
             # добавляем в список
             ptable.append(row)
