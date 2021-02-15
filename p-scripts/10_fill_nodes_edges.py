@@ -20,7 +20,7 @@ def cm_to_inch(value):
 def main():
     parser = argparse.ArgumentParser(prog='Fill nodes and edges', description='Fill nodes and edges')
     parser.add_argument('infile',  type=argparse.FileType('r', encoding='utf-8'), nargs='?',
-                    help='csv file for processing', default="../data/muratova_academic.csv")
+                    help='csv file for processing', default="../data/muratova_finished.csv")
     parser.add_argument('infile2',  type=argparse.FileType('r', encoding='utf-8'), nargs='?',
                     help='csv file 2 for processing', default="../data/persons_table_wikidata.csv")
     args = parser.parse_args()
@@ -74,7 +74,7 @@ def main():
 
     options = {
         "node_color": "#A0CBE2",
-        #"edge_color": colors,
+        "edge_color": "#6de5f7",
         "font_color": "#A52A2A",
         "width": 1,
         "edge_cmap": plt.cm.Blues,
@@ -93,29 +93,26 @@ def main():
     #H = G.subgraph(next(nx.connected_components(G)))
     degree = G.degree()
     to_remove = [n for (n,deg) in degree if deg <= 1]
-    G.remove_nodes_from(to_remove)
-    degree = G.degree()
-    to_remove = [n for (n,deg) in degree if deg <= 1]
-    G.remove_nodes_from(to_remove)
+    while to_remove:
+        G.remove_nodes_from(to_remove)
+        degree = G.degree()
+        to_remove = [n for (n,deg) in degree if deg <= 1]
     #paths=nx.all_simple_paths(G,"Пушкин, А. С.", "Тургенев, И.С.", cutoff=3)
     #print(list(paths))
     #for path in map(nx.utils.pairwise, paths):
     #    for u,v in path:
     #        G[u][v]["weight"]=2
-    
-
-
-    initialpos = {mapping['Q7200']:(-100,-100), mapping['Q42831']:(100,100)}
+  
+    initialpos = {mapping['Q7200']:(-200,-200), mapping['Q42831']:(200,200)}
     betweennessCentrality = nx.betweenness_centrality(G,normalized=True, endpoints=True)
     node_size =  [v * 10000 for v in betweennessCentrality.values()]
-    pos = nx.spring_layout(G, seed=367, iterations=300, pos = initialpos)#, k=10/sqrt(len(G)))
-    pos = nx.spring_layout(H, seed=367, iterations=300, pos = initialpos)#, k=10/sqrt(len(G)))
+    pos = nx.spring_layout(G, seed=367, iterations=300, pos = initialpos, k=70/sqrt(len(G)))
+    #pos = nx.spring_layout(H, seed=367, iterations=300, pos = initialpos)#, k=10/sqrt(len(G)))
     #pos = nx.kamada_kawai_layout(G)
     #pos = nx.spectral_layout(G)
-    #nx.draw(G, pos=pos, node_size=node_size **options)
-    #nx.draw_networkx(G, pos=pos, node_size=node_size, **options)
-    nx.draw(H, pos, **options)
-    plt.savefig("Graph.png", format="png", bbox_inches='tight')
+    nx.draw_networkx(G, pos=pos, node_size=node_size, **options)
+    #nx.draw(H, pos, **options)
+    plt.savefig("Graph.svg", format="svg", bbox_inches='tight')
     #print(G)
 
 
