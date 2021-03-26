@@ -6,6 +6,7 @@ import argparse
 import networkx as nx
 import matplotlib.pyplot as plt
 from math import sqrt
+import community
 
 #%config InlineBackend.figure_format = 'svg'
 #plt.rcParams['figure.figsize'] = (10, 6)
@@ -16,6 +17,97 @@ logging.basicConfig(
 
 def cm_to_inch(value):
     return value/2.54
+
+
+def community_layout(g, partition):
+    """
+    Compute the layout for a modular graph.
+
+
+    Arguments:
+    ----------
+    g -- networkx.Graph or networkx.DiGraph instance
+        graph to plot
+
+    partition -- dict mapping int node -> int community
+        graph partitions
+
+
+    Returns:
+    --------
+    pos -- dict mapping int node -> (float x, float y)
+        node positions
+
+    """
+
+    pos_communities = _position_communities(g, partition, scale=2., k=40/sqrt(len(g)), seed=999, iterations=10)
+
+    pos_nodes = _position_nodes(g, partition, scale=1.5, k=30/sqrt(len(g)), seed=999, iterations=10)
+
+    # combine positions
+    pos = dict()
+    for node in g.nodes():
+        pos[node] = pos_communities[node] + pos_nodes[node]
+
+    return pos
+
+def _position_communities(g, partition, **kwargs):
+
+    # create a weighted graph, in which each node corresponds to a community,
+    # and each edge weight to the number of edges between communities
+    between_community_edges = _find_between_community_edges(g, partition)
+
+    communities = set(partition.values())
+    hypergraph = nx.DiGraph()
+    hypergraph.add_nodes_from(communities)
+    for (ci, cj), edges in between_community_edges.items():
+        hypergraph.add_edge(ci, cj, weight=len(edges))
+
+    # find layout for communities
+    pos_communities = nx.spring_layout(hypergraph, **kwargs)
+
+    # set node positions to position of community
+    pos = dict()
+    for node, community in partition.items():
+        pos[node] = pos_communities[community]
+
+    return pos
+
+def _find_between_community_edges(g, partition):
+
+    edges = dict()
+
+    for (ni, nj) in g.edges():
+        ci = partition[ni]
+        cj = partition[nj]
+
+        if ci != cj:
+            try:
+                edges[(ci, cj)] += [(ni, nj)]
+            except KeyError:
+                edges[(ci, cj)] = [(ni, nj)]
+
+    return edges
+
+def _position_nodes(g, partition, **kwargs):
+    """
+    Positions nodes within communities.
+    """
+
+    communities = dict()
+    for node, community in partition.items():
+        try:
+            communities[community] += [node]
+        except KeyError:
+            communities[community] = [node]
+
+    pos = dict()
+    for ci, nodes in communities.items():
+        subgraph = g.subgraph(nodes)
+        pos_subgraph = nx.spring_layout(subgraph, **kwargs)
+        pos.update(pos_subgraph)
+
+    return pos
 
 def main():
     parser = argparse.ArgumentParser(prog='Fill nodes and edges', description='Fill nodes and edges')
@@ -64,6 +156,7 @@ def main():
         #"edge_color": weights0
     }
     #plt.subplot(122)
+    plt.axis('off')
     plt.figure(figsize=(cm_to_inch(100),cm_to_inch(100)), dpi=200)
 
     paths_edges=nx.all_simple_edge_paths(G,mapping['Q7200'], mapping['Q42831'], cutoff=3)
@@ -84,16 +177,28 @@ def main():
     #    for u,v in path:
     #        G[u][v]["weight"]=2
   
-    initialpos = {mapping['Q7200']:(-200,-200), mapping['Q42831']:(200,200)}
+    initialpos = {mapping['Q7200']:(-250,-250), mapping['Q42831']:(250,250)}
     betweennessCentrality = nx.betweenness_centrality(G,normalized=True, endpoints=True)
     node_size =  [v * 10000 for v in betweennessCentrality.values()]
-    pos = nx.spring_layout(G, seed=367, iterations=300, pos = initialpos, k=70/sqrt(len(G)))
+    #pos = nx.spring_layout(G, seed=367, iterations=300, pos = initialpos, k=70/sqrt(len(G)))
     #pos = nx.spring_layout(H, seed=367, iterations=300, pos = initialpos)#, k=10/sqrt(len(G)))
     #pos = nx.kamada_kawai_layout(G)
     #pos = nx.spectral_layout(G)
-    nx.draw_networkx(G, pos=pos, node_size=node_size, **options)
+    partition = community.best_partition(G, random_state=367, resolution=3)
+    ###pos = nx.spring_layout(G, seed=367, iterations=300, pos = initialpos, k=90/sqrt(len(G)))
+    pos = community_layout(G, partition)
+    #nx.draw_networkx(G, pos=pos, node_size=node_size, **options)
     #nx.draw(H, pos, **options)
-    plt.savefig("Graph.svg", format="svg", bbox_inches='tight')
+
+    weights = [G[u][v]['weight']/13 for u,v in G.edges()]
+    labels={}
+    for node in G.nodes():
+        if betweennessCentrality[node] >= 0.005:
+            labels[node]=node
+    nx.draw_networkx_edges(G, pos, alpha=0.3, width=weights)
+    nx.draw_networkx_nodes(G, pos, node_size=node_size, cmap=plt.cm.viridis, node_color=list(partition.values()))
+    nx.draw_networkx_labels(G, pos, labels, font_weight="bold", horizontalalignment="left", verticalalignment='top', font_color= "#FF6600")
+    plt.savefig("Graph20210306.png", format="png", bbox_inches='tight')
     #print(G)
 
 if __name__ == '__main__':

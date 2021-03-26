@@ -35,13 +35,19 @@ def main():
         for line in reader:
             ptable.append(line)
 
+    mapping = {}
+    for line in ptable:
+        mapping[line["wikidata_id"]] = line["fio_short"]
+
     edgetable = {}
     for line in ltable:
         if not line['auth_wikidataid'] or not line['dest_wikidataid']:
             continue
+        if 'еизвест' in line["адресатИП"] or 'еустановл' in line["адресатИП"]:
+            continue
         edge = line['auth_wikidataid']+line['dest_wikidataid']
         rev_edge = line['dest_wikidataid']+line['auth_wikidataid']
-        if edge not in edgetable.items() and rev_edge not in edgetable.items():
+        if edge not in edgetable.keys() and rev_edge not in edgetable.keys():
             edgetable[edge] = {}
             edgetable[edge]['auth_wikidataid'] = line['auth_wikidataid']
             edgetable[edge]['dest_wikidataid'] = line['dest_wikidataid']
@@ -51,8 +57,10 @@ def main():
             #if line['auth_wikidataid'] in ['Q7200','Q42831']:
             #    edgetable[edge]['weight']=5
             #edgetable[edge]['freq']=1
-        #else:
-        #    edgetable[edge]['freq']=edgetable[edge]['freq']+1
+        elif edge in edgetable.keys():
+                edgetable[edge]['weight']=edgetable[edge]['weight']+1
+        elif rev_edge in edgetable.keys():
+                edgetable[rev_edge]['weight']=edgetable[rev_edge]['weight']+1
     # print(edgetable)
 
     with open(outfile, 'w', encoding='utf-8') as outfile:
