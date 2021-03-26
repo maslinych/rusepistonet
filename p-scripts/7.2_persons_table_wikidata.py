@@ -159,7 +159,7 @@ def main():
         prog='Wikidata search', description='Search persons in wikidata')
     parser.add_argument('infile',  type=argparse.FileType('r', encoding='utf-8'), nargs='?',
                         help='csv file for processing', default="../data/persons_table.csv")
-    parser.add_argument('outfile', type=argparse.FileType('w', encoding='utf-8'), nargs='?',
+    parser.add_argument('outfile', type=argparse.FileType('r', encoding='utf-8'), nargs='?',
                         help='csv file for output', default="../data/persons_table_wikidata.csv")
     args = parser.parse_args()
     infile = args.infile.name
@@ -167,6 +167,12 @@ def main():
 
     # список словарей с персонами
     ptable = []
+    with open(outfile, newline='', encoding='utf-8') as datafile:
+        reader = csv.DictReader(datafile, delimiter=';')
+        for line in reader:
+            # добавляем в список
+            ptable.append(line)
+
     with open(infile, newline='', encoding='utf-8') as datafile:
         reader = csv.DictReader(datafile, delimiter=';')
         res_fieldnames = reader.fieldnames
@@ -174,6 +180,10 @@ def main():
             # ряд для ptable
             row = line
             to_search = ''
+            dup=None
+            dup=next((item for item in ptable if line["source"] == item["source"]), None)
+            if dup:
+                continue
             if line[sourcecols[0]]:
                 to_search = line[sourcecols[0]]
             else:

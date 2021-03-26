@@ -148,7 +148,7 @@ def main():
         prog='Wikidata search', description='Search persons in wikidata')
     parser.add_argument('infile',  type=argparse.FileType('r', encoding='utf-8'), nargs='?',
                         help='csv file for processing', default="../data/muratova_res6.csv")
-    parser.add_argument('outfile', type=argparse.FileType('w', encoding='utf-8'), nargs='?',
+    parser.add_argument('outfile', type=argparse.FileType('r', encoding='utf-8'), nargs='?',
                         help='csv file for output', default="../data/persons_table.csv")
     args = parser.parse_args()
     infile = args.infile.name
@@ -156,6 +156,12 @@ def main():
 
     # список словарей с персонами
     ptable = []
+    with open(outfile, newline='', encoding='utf-8') as datafile:
+        reader = csv.DictReader(datafile, delimiter=';')
+        for line in reader:
+            # добавляем в список
+            ptable.append(line)
+
     with open(infile, newline='', encoding='utf-8') as datafile:
         reader = csv.DictReader(datafile, delimiter=';')
         for line in reader:
