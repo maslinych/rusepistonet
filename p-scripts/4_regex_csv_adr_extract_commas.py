@@ -21,10 +21,10 @@ def extract_data_person2(_celldata):
         lfam=rightparts[-1]
         io_parts=innerparts[:-1]+[' '.join(lio)]
         for in_part in io_parts:
-            res_persons.append(in_part.strip()+' '+lfam)
+            res_persons.append((in_part.strip()+' '+lfam).strip())
     else:
         for in_part in innerparts:
-            res_persons.append(in_part.strip())
+            res_persons.append((in_part.strip()).strip())
     return res_persons
 
 def main():

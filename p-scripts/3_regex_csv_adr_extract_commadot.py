@@ -12,7 +12,7 @@ def extract_data_person2(_celldata):
     commadot=_celldata.split(';')
     res_persons=[]
     for cd_part in commadot:
-        res_persons.append( { rescols[0] : cd_part } )
+        res_persons.append( { rescols[0] : cd_part.strip() } )
     return res_persons
 
 def main():
