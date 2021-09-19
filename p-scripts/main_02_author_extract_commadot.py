@@ -3,21 +3,36 @@
 
 # колонка автор - разделяем на отдельные строки каждого автора письма (если их несколько), разделенных ';' (точкой с запятой)
 
+from operator import truediv
 import re
 import csv
 import argparse
 
-default_source_file = '../data/muratova_res02.csv'
-default_dest_file = '../data/muratova_res03.csv'
-sourcecol = 'автор_имя' # Столбец со строками для обработки
+default_source_file = '../data/muratova_res01.csv'
+default_dest_file = '../data/muratova_res02.csv'
+sourcecol = 'автор' # Столбец со строками для обработки
 rescols = ['автор_тчкзпт'] # столбцы куда надо будет записать данные
 
 def extract_data_person2(_celldata):
-
-    commadot=re.search("^(.+?;)(.+?)$")
+    commadot=_celldata.split(';')
     res_persons=[]
-    for index, cd_part in commadot:
-        res_persons.append( { rescols[0] : cd_part.strip() } )
+    skob_open=False
+    string_collect=""
+    for cd_part in commadot:
+        if (re.search("\(.+\)", cd_part) or not re.search("\(",cd_part)) and not skob_open:
+            res_persons.append( { rescols[0] : cd_part.strip() } )
+        elif re.search("\(",cd_part):
+            skob_open = True
+            string_collect=""
+            string_collect=cd_part+";"
+        elif skob_open and not re.search("\)",cd_part.strip()):
+            string_collect=string_collect+" "+cd_part
+        elif skob_open and re.search("\)",cd_part.strip()):
+            skob_open = False
+            string_collect=string_collect+" "+cd_part
+            res_persons.append( { rescols[0] : string_collect.strip() } )
+            string_collect = ""
+            
     return res_persons
 
 def main():

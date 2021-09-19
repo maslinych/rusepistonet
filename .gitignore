@@ -6,3 +6,4 @@ muratova_res*
 *.log
 .vscode
 *.Rproj
+*.pyc
