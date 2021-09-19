@@ -1,18 +1,25 @@
 # Зависимости
 # Python 3.8 https://www.python.org/downloads/
 
+# добавляем колонки "номер переписки" (порядоковый номер письма в списке) и
+# id_переписки - содержит хеш с солью (для уникальности) строки "автор + адресаты"
+
 import re
 import csv
 import argparse
 import hashlib
 import uuid
 
-
+default_source_file = '../data/muratova.csv'
+default_dest_file = '../data/muratova_res01.csv'
 sourcecol = 'персоналии'  # столбец со строками для обработки
 # столбцы, куда надо будет записать данные
 rescols = ['адресат', 'количество писем', 'даты']
 sourceidcol = ['автор', sourcecol]
 residcol = 'id_переписки'
+rescountcol = 'номер в списке'
+
+counter = 0
 
 
 def extract_data(_celldata):
@@ -44,9 +51,16 @@ def extract_data(_celldata):
 
 
 def generate_string_id(_input_str):
+    global counter
     salt = uuid.uuid4().hex
     hash_obj = hashlib.sha1(salt.encode()+_input_str.encode())
     return hash_obj.hexdigest()
+
+
+def count_all():
+    global counter
+    counter = counter + 1
+    return str(counter).zfill(10)
 
 
 def main():
@@ -54,7 +68,7 @@ def main():
     parser = argparse.ArgumentParser(prog='separation of personalities',
                                      description='Extract personalities into another column and/or modify them')
     parser.add_argument('infile',  type=argparse.FileType('r', encoding='utf-8'), nargs='?',
-                        help='csv file for processing', default="../data/muratova.csv")
+                        help='csv file for processing', default="")
     parser.add_argument('outfile', type=argparse.FileType('w', encoding='utf-8'), nargs='?',
                         help='csv file for output', default="../data/muratova_res.csv")
 
@@ -65,7 +79,7 @@ def main():
     with open(infile, newline='', encoding='utf-8') as datafile:
         # newline='' - для корректного определения новой строки
         reader = csv.DictReader(datafile, delimiter=';')
-        res_fieldnames = [residcol]+reader.fieldnames+rescols
+        res_fieldnames = [rescountcol, residcol]+reader.fieldnames+rescols
         with open(outfile, "w", newline='', encoding='utf-8') as resfile:
             writer = csv.DictWriter(
                 resfile, fieldnames=res_fieldnames, delimiter=';', quoting=csv.QUOTE_NONNUMERIC)
@@ -87,12 +101,13 @@ def main():
                 idsource = ":" + idsource + line[p]
 
             idres = generate_string_id(idsource)
-            line.update({residcol: idres})
+            line.update({rescountcol: count_all(), residcol: idres})
 
             with open(outfile, "a", newline='', encoding='utf-8') as resfile:
                 writer = csv.DictWriter(
                     resfile, fieldnames=res_fieldnames, delimiter=';', quoting=csv.QUOTE_NONNUMERIC)
                 writer.writerow(line)
+
 
 if __name__ == '__main__':
     main()

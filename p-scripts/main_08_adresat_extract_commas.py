@@ -1,10 +1,15 @@
- # Зависимости
+# Зависимости
 # Python 3.8 https://www.python.org/downloads/
+
+# колонка "персоналии" (адресаты) - разделяем на отдельные строки персоналии, разделенные запятой
+
 
 import re
 import csv
 import argparse
 
+default_source_file = '../data/muratova_res07.csv'
+default_dest_file = '../data/muratova_res08.csv'
 sourcecol = 'адресат_тчкзпт' # Столбец со строками для обработки
 rescols = ['адресат_одиночн'] # столбцы куда надо будет записать данные
 

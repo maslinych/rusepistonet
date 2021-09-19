@@ -1,15 +1,23 @@
 import logging
-import time
 import sys
 import csv
 import argparse
 import networkx as nx
 import matplotlib.pyplot as plt
-from math import sqrt
 import community
+from math import sqrt
+from datetime import datetime
+
+
+# граф строится из предположения, что Пушкин и Тургенев - центральные ноды
+# удаляются все ноды с 1 связью или оставшиеся без связей
 
 #%config InlineBackend.figure_format = 'svg'
 #plt.rcParams['figure.figsize'] = (10, 6)
+
+default_edgelist_file = '../data/muratova_res14.csv'
+default_persons_file = '../data/persons_table_res13.csv'
+default_dest_file = "Graph"+datetime.now().strftime("%Y-%d-%m-%H-%M-%S")+".png"
 
 # Логирование в utf-8 для отладки
 logging.basicConfig(
@@ -112,12 +120,12 @@ def _position_nodes(g, partition, **kwargs):
 def main():
     parser = argparse.ArgumentParser(prog='Fill nodes and edges', description='Fill nodes and edges')
     parser.add_argument('infile',  type=argparse.FileType('r', encoding='utf-8'), nargs='?',
-                    help='csv file for processing', default="../data/muratova_edgelist_agediff.csv")
-    # parser.add_argument('infile2',  type=argparse.FileType('r', encoding='utf-8'), nargs='?',
-    #                 help='csv file 2 for processing', default="../data/persons_table_wikidata.csv")
+                    help='csv file for processing', default="../data/muratova_edgelist.csv")
+    parser.add_argument('infile2',  type=argparse.FileType('r', encoding='utf-8'), nargs='?',
+                    help='csv file 2 for processing', default="../data/persons_table_wikidata.csv")
     args = parser.parse_args()
     infile_data = args.infile.name
-    # infile2_data = args.infile2.name
+    infile2_data = args.infile2.name
     
     edgelist = []
     with open(infile_data, newline='', encoding='utf-8') as datafile:
@@ -125,19 +133,19 @@ def main():
         for line in reader:
             edgelist.append(line)
 
-    # ptable = []
-    # with open(infile2_data, newline='', encoding='utf-8') as datafile:
-    #     reader = csv.DictReader(datafile, delimiter=';')
-    #     for line in reader:
-    #         ptable.append(line)
+    ptable = []
+    with open(infile2_data, newline='', encoding='utf-8') as datafile:
+        reader = csv.DictReader(datafile, delimiter=';')
+        for line in reader:
+            ptable.append(line)
 
-    # mapping = {}
-    # for line in ptable:
-    #     mapping[line["wikidata_id"]] = line["fio_short"]
+    mapping = {}
+    for line in ptable:
+        mapping[line["wikidata_id"]] = line["fio_short"]
 
     G = nx.Graph()
     for edge in edgelist:
-        G.add_edge(edge['auth_fio_short'], edge['dest_fio_short'], weight=int(edge['weight']), agediff=int(edge['age_diff']))
+        G.add_edge(edge['auth_fio_short'], edge['dest_fio_short'], weight=int(edge['weight']))
 
     # no need to relabel, we now read names directly from the input edgelist
     # G = nx.relabel_nodes(G, mapping)
@@ -159,10 +167,10 @@ def main():
     plt.axis('off')
     plt.figure(figsize=(cm_to_inch(100),cm_to_inch(100)), dpi=200)
 
-    #paths_edges=nx.all_simple_edge_paths(G,mapping['Q7200'], mapping['Q42831'], cutoff=3)
-    #H = nx.Graph()
-    #for edge in paths_edges:
-    #    H.add_edges_from(edge)
+    paths_edges=nx.all_simple_edge_paths(G,mapping['Q7200'], mapping['Q42831'], cutoff=3)
+    H = nx.Graph()
+    for edge in paths_edges:
+        H.add_edges_from(edge)
 
     #H = G.subgraph(next(nx.connected_components(G)))
     degree = G.degree()
@@ -171,15 +179,13 @@ def main():
         G.remove_nodes_from(to_remove)
         degree = G.degree()
         to_remove = [n for (n,deg) in degree if deg <= 1]
-    
- 
     #paths=nx.all_simple_paths(G,"Пушкин, А. С.", "Тургенев, И.С.", cutoff=3)
     #print(list(paths))
     #for path in map(nx.utils.pairwise, paths):
     #    for u,v in path:
     #        G[u][v]["weight"]=2
   
-    #initialpos = {mapping['Q7200']:(-250,-250), mapping['Q42831']:(250,250)}
+    initialpos = {mapping['Q7200']:(-250,-250), mapping['Q42831']:(250,250)}
     betweennessCentrality = nx.betweenness_centrality(G,normalized=True, endpoints=True)
     node_size =  [v * 10000 for v in betweennessCentrality.values()]
     #pos = nx.spring_layout(G, seed=367, iterations=300, pos = initialpos, k=70/sqrt(len(G)))
@@ -193,15 +199,14 @@ def main():
     #nx.draw(H, pos, **options)
 
     weights = [G[u][v]['weight']/13 for u,v in G.edges()]
-    edgecolor = [G[u][v]['agediff'] if G[u][v]['agediff'] > 4 else 0 for u,v in G.edges()]
     labels={}
     for node in G.nodes():
         if betweennessCentrality[node] >= 0.005:
             labels[node]=node
-    nx.draw_networkx_edges(G, pos, alpha=0.45, width=weights, edge_cmap=plt.cm.cool, edge_vmin=0, edge_vmax=100, edge_color=edgecolor)
+    nx.draw_networkx_edges(G, pos, alpha=0.3, width=weights)
     nx.draw_networkx_nodes(G, pos, node_size=node_size, cmap=plt.cm.viridis, node_color=list(partition.values()))
     nx.draw_networkx_labels(G, pos, labels, font_weight="bold", horizontalalignment="left", verticalalignment='top', font_color= "#FF6600")
-    plt.savefig("Graph20210909.png", format="png", bbox_inches='tight')
+    plt.savefig("Graph20210306.png", format="png", bbox_inches='tight')
     #print(G)
 
 if __name__ == '__main__':

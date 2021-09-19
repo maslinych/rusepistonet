@@ -3,8 +3,14 @@ import sys
 import csv
 import argparse
 
+# сохраняем в отдельный файлы сформированные грани и ноды для графа
+
 #%config InlineBackend.figure_format = 'svg'
 #plt.rcParams['figure.figsize'] = (10, 6)
+
+default_source_file = '../data/muratova_res14.csv'
+default_persons_file = '../data/persons_table_res13.csv'
+default_dest_file = '../data/muratova_edgelist_res15.csv'
 
 # Логирование в utf-8 для отладки
 logging.basicConfig(

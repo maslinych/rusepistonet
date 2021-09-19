@@ -3,6 +3,9 @@
 # pip install pymorphy2
 # pip install -U pymorphy2-dicts-ru русский словарь
 
+# колонка "персоналии" (адресаты) - преобразуем фаимилии адресатов в единственное число, именительный падеж
+# с помощью пакета pymorphy2, русского словаря для него и приготовленных вручную исключений
+
 import pymorphy2
 # возвращает заглавные буквы после преобразования
 from pymorphy2.shapes import restore_capitalization

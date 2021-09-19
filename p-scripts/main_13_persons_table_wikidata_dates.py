@@ -2,14 +2,17 @@
 # Python 3.8 https://www.python.org/downloads/
 # qwikidata
 
+# добавляем дату рождения и смерти из wikidata
+
 import re
 import logging
 import time
 import sys
 import csv
 import argparse
-#import datetime
+import datetime
 from dateutil.parser import parse
+from networkx.classes.function import degree
 from requests import get
 import hashlib
 import uuid
@@ -19,16 +22,14 @@ import os
 logging.basicConfig(
     handlers=[logging.StreamHandler(sys.stdout)], level=logging.INFO)
 
+default_source_file = '../data/persons_table_res12.csv'
+default_dest_file = '../data/persons_table_res13.csv'
 
 # столбцы со строками для обработки
-sourcecols = ['fio_full', 'fio_short', 'fam_orig', 'io_short']
+sourcecols = ['wikidata_id','fam_orig']
 
-rescols = ['wikidata_id', 'wikidata_url']
+rescols = ['wikidata_birthdate', 'wikidata_enddate']
 
-bstartdate = 1750
-benddate = 1900
-dstartdate = 1800
-denddate = 1940
 
 def test_tag_list(keys, tags):
     for key in keys:
@@ -42,39 +43,6 @@ def safe_list_get(l, idx, default):
         return l[idx]
     except IndexError:
         return default
-
-def generate_string_id(_input):
-    salt = uuid.uuid4().hex
-    hash_obj = hashlib.sha1(salt.encode()+str(_input).encode())
-    return hash_obj.hexdigest()
-
-def get_qnumbers(search):
-
-    resp_code = 0
-    while resp_code != 200:
-        # time.sleep(1)
-        logging.info(str(search))
-        resp = get('https://www.wikidata.org/w/api.php', {
-            'action': 'query',
-            'list': 'search',
-            'srsearch': search,
-            'format': 'json',
-            'indexpageids': '1',
-            'utf8': '1',
-            'srnamespace': '0|4',
-            'srinterwiki': '1',
-        })
-        resp_code = resp.status_code
-        if resp_code != 200:
-            time.sleep(3)
-            continue
-        resp_json = resp.json()
-        # logging.info(str(resp_json))
-        if len(resp_json['query']['search']) > 0:
-            ids = list(map(lambda d: d['title'], filter( lambda x: x['title'][0]=='Q', resp_json['query']['search'])))
-            return ids
-    return []
-
 
 def get_property_value(entity, prop_id, prop_type):
     claims = entity.get('claims')
@@ -97,21 +65,17 @@ def get_year(wikidate):
         return ''
 
 
-# wikidata_query.get_qnumber_sparql(
-#                wikisearch=author, birthdate_begin="1800", birthdate_end="1899")
-
 ent_count=0
 
-def select_entity(entities):
+def select_entity(entity):
     global ent_count
     resp_code = 0
-    join_entities = '|'.join(entities)
     while resp_code != 200:
         # time.sleep(1)
-        logging.info(str(join_entities))
+        logging.info(str(entity))
         resp = get('https://www.wikidata.org/w/api.php', {
             'action': 'wbgetentities',
-            'ids': join_entities,
+            'ids': entity,
             'format': 'json',
             'languages': 'ru',
         })
@@ -134,22 +98,19 @@ def select_entity(entities):
                     continue
                 # print(str(P569birthdate))
                 if P569birthdate:
-                    P569birthdate = get_year(P569birthdate)
-                    print(P569birthdate)
-                    if P569birthdate and ((int(P569birthdate) <= bstartdate) or (int(P569birthdate) > benddate)):
-                        continue
+                    birthdate = get_year(P569birthdate)
+                    print(birthdate)
+                else:
+                    birthdate = ''
                 # print(str(P570deathdate))
                 if P570deathdate:
-                    P570deathdate = get_year(P570deathdate)
-                    print(P570deathdate)
-                    if P570deathdate and ((int(P570deathdate) <= dstartdate) or (int(P570deathdate) > denddate)):
-                        continue
-                if not(P569birthdate or P570deathdate):
-                    continue
-                return [wid, 'https://www.wikidata.org/wiki/'+wid]
+                    deathdate = get_year(P570deathdate)
+                    print(deathdate)
+                else:
+                    deathdate = ''
+                return [birthdate, deathdate]
     ent_count=ent_count+1
-    id='random_id'+generate_string_id(ent_count)
-    return [id, id]
+    return ['', '']
 
 
 def main():
@@ -158,24 +119,25 @@ def main():
     parser = argparse.ArgumentParser(
         prog='Wikidata search', description='Search persons in wikidata')
     parser.add_argument('infile',  type=argparse.FileType('r', encoding='utf-8'), nargs='?',
-                        help='csv file for processing', default="../data/persons_table.csv")
-    parser.add_argument('outfile', type=argparse.FileType('r', encoding='utf-8'), nargs='?',
-                        help='csv file for output', default="../data/persons_table_wikidata.csv")
+                        help='csv file for processing', default="../data/persons_table_wikidata.csv")
+    parser.add_argument('outfile', type=argparse.FileType('a', encoding='utf-8'), nargs='?',
+                        help='csv file for output', default="../data/persons_table_wikidata_dates.csv")
     args = parser.parse_args()
     infile = args.infile.name
     outfile = args.outfile.name
 
     # список словарей с персонами
     ptable = []
-    with open(outfile, newline='', encoding='utf-8') as datafile:
-        reader = csv.DictReader(datafile, delimiter=';')
-        for line in reader:
-            # добавляем в список
-            ptable.append(line)
+    if os.path.isfile(outfile):
+        with open(outfile, newline='', encoding='utf-8') as datafile:
+            reader = csv.DictReader(datafile, delimiter=';')
+            for line in reader:
+                # добавляем в список
+                ptable.append(line)
 
     with open(infile, newline='', encoding='utf-8') as datafile:
         reader = csv.DictReader(datafile, delimiter=';')
-        res_fieldnames = reader.fieldnames
+        res_fieldnames = reader.fieldnames + rescols
         for line in reader:
             # ряд для ptable
             row = line
@@ -184,26 +146,14 @@ def main():
             dup=next((item for item in ptable if line["source"] == item["source"]), None)
             if dup:
                 continue
-            if line[sourcecols[0]]:
+            if line[sourcecols[0]] and line[sourcecols[0]].startswith("Q"):
                 to_search = line[sourcecols[0]]
-            else:
-                to_search = line[sourcecols[1]]
-            mult=re.search(r'[ыи]м$',line[sourcecols[2]])
-            if mult:
-                to_search = f"{line[sourcecols[2]][:-2]}* {line[sourcecols[3]]}"
-            stopword=re.search(r'[«»]', line[sourcecols[2]])
-            unknown=re.search(r'еизвес', line[sourcecols[2]])
+            stopword=re.search(r'[«»]', line[sourcecols[1]])
+            unknown=re.search(r'еизвес', line[sourcecols[1]])
            
-            row['wikidata_id'], row['wikidata_url'] = ['','']
-            if (len(to_search)>2) and not (stopword or unknown):
-                search_res = get_qnumbers(to_search)
-                if search_res:
-                    row['wikidata_id'], row['wikidata_url'] = select_entity(search_res)
-
-            if not row['wikidata_id']:
-                ent_count=ent_count+1
-                id='random_id'+generate_string_id(ent_count)
-                row['wikidata_id'], row['wikidata_url'] = [id, id]
+            row['wikidata_birthdate'], row['wikidata_enddate'] = ['','']
+            if to_search and not (stopword or unknown):
+                row['wikidata_birthdate'], row['wikidata_enddate'] = select_entity(to_search)
 
             # добавляем в список
             ptable.append(row)

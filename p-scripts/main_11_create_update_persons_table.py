@@ -2,6 +2,8 @@
 # Python 3.8 https://www.python.org/downloads/
 # qwikidata
 
+# сохраняем в отдельный файл персоналии - авторы и адресаты
+
 import pymorphy2
 # возвращает заглавные буквы после преобразования
 from pymorphy2.shapes import restore_capitalization
@@ -20,7 +22,8 @@ import wikidata_query
 logging.basicConfig(
     handlers=[logging.StreamHandler(sys.stdout)], level=logging.INFO)
 
-
+default_source_file = '../data/muratova_res10.csv'
+default_dest_file = '../data/persons_table_res11.csv"'
 # столбцы со строками для обработки
 sourcecols = ['автор', 'адресат_ио', 'адресатИП', 'фамилия_неделимо']
 #rescols = ['authorwikidataurl', 'authorwikidataid', 'adrwikidataurl',

@@ -1,12 +1,16 @@
 # Зависимости
 # Python 3.8 https://www.python.org/downloads/
 
+# колонка автор - разделяем на отдельные строки каждого автора письма (если их несколько), разделенных ';' (точкой с запятой)
+
 import re
 import csv
 import argparse
 
-sourcecol = 'адресат_имя' # Столбец со строками для обработки
-rescols = ['адресат_тчкзпт'] # столбцы куда надо будет записать данные
+default_source_file = '../data/muratova_res02.csv'
+default_dest_file = '../data/muratova_res03.csv'
+sourcecol = 'автор_имя' # Столбец со строками для обработки
+rescols = ['автор_тчкзпт'] # столбцы куда надо будет записать данные
 
 def extract_data_person2(_celldata):
     commadot=_celldata.split(';')

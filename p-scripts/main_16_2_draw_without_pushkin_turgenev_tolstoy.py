@@ -8,8 +8,15 @@ import matplotlib.pyplot as plt
 from math import sqrt
 import community
 
+# граф строится без Пушкина и Тургенев
+# удаляются все ноды с 1 связью или оставшиеся без связей
+
 #%config InlineBackend.figure_format = 'svg'
 #plt.rcParams['figure.figsize'] = (10, 6)
+
+default_edgelist_file = '../data/muratova_res14.csv'
+default_persons_file = '../data/persons_table_res13.csv'
+default_dest_file = "Graph"+datetime.now().strftime("%Y-%d-%m-%H-%M-%S")+".png"
 
 # Логирование в utf-8 для отладки
 logging.basicConfig(

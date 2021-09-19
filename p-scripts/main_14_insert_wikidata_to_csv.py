@@ -1,9 +1,15 @@
- # Зависимости
+# Зависимости
 # Python 3.8 https://www.python.org/downloads/
+
+# дописываем в основную таблицу идентификаторы авторов и адресатов из таблицы
 
 import re
 import csv
 import argparse
+
+default_source_file = '../data/muratova_res10.csv'
+default_persons_file = '../data/persons_table_res13.csv'
+default_dest_file = '../data/muratova_res14.csv'
 
 wikidata_table_sourcecols = ['source', 'fio_full', 'fio_short', 'wikidata', 'wikidata_url']
 csv_source_cols = ['автор', 'адресат_ио', 'адресатИП']

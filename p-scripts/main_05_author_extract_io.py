@@ -1,12 +1,16 @@
 # Зависимости
 # Python 3.8 https://www.python.org/downloads/
 
+# колонка автор - выделяем в отдельные колонки фамилию и инициалы/Имя Отчество
+
 import re
 import csv
 import argparse
 
-sourcecol = 'адресат_одиночн' # Столбец со строками для обработки
-rescols = ['адресат_ио','фамилия_неделимо'] # столбцы куда надо будет записать данные
+default_source_file = '../data/muratova_res04.csv'
+default_dest_file = '../data/muratova_res05.csv'
+sourcecol = 'автор_одиночн' # Столбец со строками для обработки
+rescols = ['автор_ио','автор_неделимо'] # столбцы куда надо будет записать данные
 
 def extract_data_person(_celldata):
     search=[]
