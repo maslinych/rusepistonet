@@ -9,13 +9,26 @@ import argparse
 
 default_source_file = '../data/muratova_res04.csv'
 default_dest_file = '../data/muratova_res05.csv'
-sourcecol = 'автор_одиночн' # Столбец со строками для обработки
+sourcecol = 'автор_имя' # Столбец со строками для обработки
 rescols = ['автор_ио','автор_неделимо'] # столбцы куда надо будет записать данные
 
 def extract_data_person(_celldata):
     search=[]
     return_value={ rescols[0]:"", rescols[1]: ""}
-    search.append(re.search(r'^(?P<IO>[А-ЯЁ][а-яё\-]*?\. [А-ЯЁ][а-яё\-]*?\. [А-ЯЁ][а-яё\-]*?\.) (?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+)$',_celldata)) # I.O.O. Fam
+    search.append(re.search(r'^(?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+), (?P<IO>[А-ЯЁ][а-яё\-]*? [А-ЯЁ][а-яё\-]*?)$',_celldata)) # Fam, Im Otch
+    search.append(re.search(r'^(?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+), (?P<IO>[А-ЯЁ][а-яё\-]*?-[А-ЯЁ][а-яё\-]*?)$',_celldata)) # Fam, Im-Otch
+    search.append(re.search(r'^(?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+), (?P<IO>[А-ЯЁ][а-яё\-]*?)$',_celldata)) # Fam, Im
+    search.append(re.search(r'^(?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+), (?P<IO>[А-ЯЁ][а-яё\-]*?\. [А-ЯЁ][а-яё\-]*?\.)$',_celldata)) # Fam, I. O.
+    search.append(re.search(r'^(?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+), (?P<IO>[А-ЯЁ][а-яё\-]*?\.-[А-ЯЁ][а-яё\-]*?\.)$',_celldata)) # Fam, I.-O.
+    search.append(re.search(r'^(?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+), (?P<IO>[А-ЯЁ][а-яё\-]*? [А-ЯЁ][а-яё\-]*?\.)$',_celldata)) # Fam, Im O.
+    search.append(re.search(r'^(?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+), (?P<IO>[А-ЯЁ][а-яё\-]*?-[А-ЯЁ][а-яё\-]*? [А-ЯЁ][а-яё\-]*?)$',_celldata)) # Fam, Im-Otch # Толь, Феликс-Эммануил Густавович
+    search.append(re.search(r'^(?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+), (?P<IO>[А-ЯЁ][а-яё\-]*?-[А-ЯЁ][а-яё\-]*?-[А-ЯЁ][а-яё\-]*?)$',_celldata)) # Fam, I-O-O (Жобар, Жан-Баптист-Альфонс)
+    search.append(re.search(r'^(?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+), (?P<IO>[А-ЯЁ][а-яё\-]*?\.)$',_celldata)) # Fam, I.
+    search.append(re.search(r'^(?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+), (?P<IO>.*? де)$',_celldata)) # Fam, Fullname де // Мопассан, Гюи де
+    search.append(re.search(r'^(?P<IO>[А-ЯЁ][А-ЯЁа-яё\-]+ фон [А-ЯЁ][А-ЯЁа-яё\-]+), (?P<IO>[А-ЯЁ][а-яё\-]*? [А-ЯЁ][а-яё\-]*?)$',_celldata)) # Икскуль фон Гильденбанд, Варвара Ивановна
+    search.append(re.search(r'^(?P<IO>[А-ЯЁ][а-яё\-]*?\. [А-ЯЁ][а-яё\-]*?\. [А-ЯЁ][а-яё\-]*?\.) (?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+)$',_celldata)) # I. O. O. Fam
+    search.append(re.search(r'^(?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+), (?P<IO>[А-ЯЁ][а-яё\-]*?\. [А-ЯЁ][а-яё\-]*?\. [А-ЯЁ][а-яё\-]*?\.)$',_celldata)) # Fam, I. O. O. 
+    search.append(re.search(r'^(?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+), (?P<IO>.*? фон)$',_celldata)) # Fam, Im Otch фон  // Фок, Максим Яковлевич фон
     search.append(re.search(r'^(?P<IO>[А-ЯЁ][а-яё\-]*?\. [А-ЯЁ][а-яё\-]*?\.) (?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+)$',_celldata)) # I. O. Fam
     search.append(re.search(r'^(?P<IO>[А-ЯЁ][а-яё\-]*?\.-[А-ЯЁ][а-яё\-]*?\.) (?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+)$',_celldata)) # I.-O. Fam
     search.append(re.search(r'^(?P<IO>[А-ЯЁ][а-яё\-]*? [А-ЯЁ][а-яё\-]*?\.) (?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+)$',_celldata)) # Fullname O. Fam
