@@ -7,6 +7,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from math import sqrt
 import community
+from datetime import datetime
 
 # граф строится без Пушкина и Тургенев
 # удаляются все ноды с 1 связью или оставшиеся без связей
@@ -16,7 +17,7 @@ import community
 
 default_edgelist_file = '../data/muratova_res14.csv'
 default_persons_file = '../data/persons_table_res13.csv'
-default_dest_file = "Graph"+datetime.now().strftime("%Y-%d-%m-%H-%M-%S")+".png"
+default_dest_file = "Graph_16_3_"+datetime.now().strftime("%Y-%d-%m-%H-%M-%S")+".png"
 
 # Логирование в utf-8 для отладки
 logging.basicConfig(
@@ -210,7 +211,7 @@ def main():
     nx.draw_networkx_edges(G, pos, alpha=0.3, width=weights)
     nx.draw_networkx_nodes(G, pos, node_size=node_size, cmap=plt.cm.viridis, node_color=list(partition.values()))
     nx.draw_networkx_labels(G, pos, labels, font_weight="bold", horizontalalignment="left", verticalalignment='top', font_color= "#FF6600")
-    plt.savefig("Graph20210621.png", format="png", bbox_inches='tight')
+    plt.savefig(default_dest_file, format="png", bbox_inches='tight')
     #print(G)
 
 if __name__ == '__main__':

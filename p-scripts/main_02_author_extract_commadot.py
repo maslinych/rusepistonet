@@ -13,9 +13,10 @@ sourcecol = 'автор_имя' # Столбец со строками для о
 rescols = ['автор_тчкзпт'] # столбцы куда надо будет записать данные
 
 def extract_data_person2(_celldata):
-    commadot=_celldata.split(';')
+
+    commadot=re.search("^(.+?;)(.+?)$")
     res_persons=[]
-    for cd_part in commadot:
+    for index, cd_part in commadot:
         res_persons.append( { rescols[0] : cd_part.strip() } )
     return res_persons
 
