@@ -7,9 +7,9 @@ import re
 import csv
 import argparse
 
-default_source_file = '../data/muratova_res05.csv'
-default_dest_file = '../data/muratova_res06.csv'
-sourcecol = 'адресат' # Столбец со строками для обработки
+default_source_file = '../data/muratova_res06.csv'
+default_dest_file = '../data/muratova_res07.csv'
+sourcecol = 'адресат_тчкзпт' # Столбец со строками для обработки
 rescols = ['адресат_имя', 'адресат_примечание'] # столбцы куда надо будет записать данные
 
 def extract_data_person(_celldata):
