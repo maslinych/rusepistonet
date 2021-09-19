@@ -25,7 +25,8 @@ def extract_data_person(_celldata):
     search.append(re.search(r'^(?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+), (?P<IO>[А-ЯЁ][а-яё\-]*?-[А-ЯЁ][а-яё\-]*?-[А-ЯЁ][а-яё\-]*?)$',_celldata)) # Fam, I-O-O (Жобар, Жан-Баптист-Альфонс)
     search.append(re.search(r'^(?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+), (?P<IO>[А-ЯЁ][а-яё\-]*?\.)$',_celldata)) # Fam, I.
     search.append(re.search(r'^(?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+), (?P<IO>.*? де)$',_celldata)) # Fam, Fullname де // Мопассан, Гюи де
-    search.append(re.search(r'^(?P<IO>[А-ЯЁ][А-ЯЁа-яё\-]+ фон [А-ЯЁ][А-ЯЁа-яё\-]+), (?P<IO>[А-ЯЁ][а-яё\-]*? [А-ЯЁ][а-яё\-]*?)$',_celldata)) # Икскуль фон Гильденбанд, Варвара Ивановна
+    search.append(re.search(r'^(?P<FAM>Де [А-ЯЁ][А-ЯЁа-яё\-]+), (?P<IO>.*?)$',_celldata)) # Де Fam, Fullname // Де Роберти, Евгений Валентинович
+    search.append(re.search(r'^(?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+ фон [А-ЯЁ][А-ЯЁа-яё\-]+), (?P<IO>[А-ЯЁ][а-яё\-]*? [А-ЯЁ][а-яё\-]*?)$',_celldata)) # Икскуль фон Гильденбанд, Варвара Ивановна
     search.append(re.search(r'^(?P<IO>[А-ЯЁ][а-яё\-]*?\. [А-ЯЁ][а-яё\-]*?\. [А-ЯЁ][а-яё\-]*?\.) (?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+)$',_celldata)) # I. O. O. Fam
     search.append(re.search(r'^(?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+), (?P<IO>[А-ЯЁ][а-яё\-]*?\. [А-ЯЁ][а-яё\-]*?\. [А-ЯЁ][а-яё\-]*?\.)$',_celldata)) # Fam, I. O. O. 
     search.append(re.search(r'^(?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+), (?P<IO>.*? фон)$',_celldata)) # Fam, Im Otch фон  // Фок, Максим Яковлевич фон
