@@ -13,6 +13,7 @@ import time
 import sys
 import csv
 import argparse
+import os
 from import_exclusions import exclusions_phrase, exclusions_word
 
 from requests import get
@@ -159,11 +160,12 @@ def main():
 
     # список словарей с персонами
     ptable = []
-    with open(outfile, newline='', encoding='utf-8') as datafile:
-        reader = csv.DictReader(datafile, delimiter=';')
-        for line in reader:
-            # добавляем в список
-            ptable.append(line)
+    if os.path.isfile(outfile):
+        with open(outfile, newline='', encoding='utf-8') as datafile:
+            reader = csv.DictReader(datafile, delimiter=';')
+            for line in reader:
+                # добавляем в список
+                ptable.append(line)
 
     with open(infile, newline='', encoding='utf-8') as datafile:
         reader = csv.DictReader(datafile, delimiter=';')

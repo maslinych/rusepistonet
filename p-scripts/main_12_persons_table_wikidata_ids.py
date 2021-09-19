@@ -172,11 +172,12 @@ def main():
 
     # список словарей с персонами
     ptable = []
-    with open(outfile, newline='', encoding='utf-8') as datafile:
-        reader = csv.DictReader(datafile, delimiter=';')
-        for line in reader:
-            # добавляем в список
-            ptable.append(line)
+    if os.path.isfile(outfile):
+        with open(outfile, newline='', encoding='utf-8') as datafile:
+            reader = csv.DictReader(datafile, delimiter=';')
+            for line in reader:
+                # добавляем в список
+                ptable.append(line)
 
     with open(infile, newline='', encoding='utf-8') as datafile:
         reader = csv.DictReader(datafile, delimiter=';')
