@@ -18,6 +18,8 @@ from import_exclusions import exclusions_phrase, exclusions_word
 # Запуск анализатора морф
 morph = pymorphy2.MorphAnalyzer()
 
+default_source_file = '../data/muratova_res09.csv'
+default_dest_file = '../data/muratova_res10.csv'
 sourcecol = 'фамилия_неделимо'  # столбец со строками для обработки
 rescols = ['адресатИП']  # столбцы, куда надо будет записать данные
 
@@ -124,9 +126,9 @@ def main():
     parser = argparse.ArgumentParser(
         prog='Personalii convert', description='Extract personalies into another column and/or modify them')
     parser.add_argument('infile',  type=argparse.FileType('r', encoding='utf-8'), nargs='?',
-                        help='csv file for processing', default="../data/muratova_res5.csv")
+                        help='csv file for processing', default=default_source_file)
     parser.add_argument('outfile', type=argparse.FileType('w', encoding='utf-8'), nargs='?',
-                        help='csv file for output', default="../data/muratova_res6.csv")
+                        help='csv file for output', default=default_dest_file)
     args = parser.parse_args()
     infile = args.infile.name
     outfile = args.outfile.name

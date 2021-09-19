@@ -119,9 +119,9 @@ def main():
     parser = argparse.ArgumentParser(
         prog='Wikidata search', description='Search persons in wikidata')
     parser.add_argument('infile',  type=argparse.FileType('r', encoding='utf-8'), nargs='?',
-                        help='csv file for processing', default="../data/persons_table_wikidata.csv")
+                        help='csv file for processing', default=default_source_file)
     parser.add_argument('outfile', type=argparse.FileType('a', encoding='utf-8'), nargs='?',
-                        help='csv file for output', default="../data/persons_table_wikidata_dates.csv")
+                        help='csv file for output', default=default_dest_file)
     args = parser.parse_args()
     infile = args.infile.name
     outfile = args.outfile.name

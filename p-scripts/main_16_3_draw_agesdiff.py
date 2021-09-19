@@ -121,7 +121,7 @@ def _position_nodes(g, partition, **kwargs):
 def main():
     parser = argparse.ArgumentParser(prog='Fill nodes and edges', description='Fill nodes and edges')
     parser.add_argument('infile',  type=argparse.FileType('r', encoding='utf-8'), nargs='?',
-                    help='csv file for processing', default="../data/muratova_edgelist_agediff.csv")
+                    help='csv file for processing', default=default_edgelist_file)
     # parser.add_argument('infile2',  type=argparse.FileType('r', encoding='utf-8'), nargs='?',
     #                 help='csv file 2 for processing', default="../data/persons_table_wikidata.csv")
     args = parser.parse_args()
@@ -210,7 +210,7 @@ def main():
     nx.draw_networkx_edges(G, pos, alpha=0.45, width=weights, edge_cmap=plt.cm.cool, edge_vmin=0, edge_vmax=100, edge_color=edgecolor)
     nx.draw_networkx_nodes(G, pos, node_size=node_size, cmap=plt.cm.viridis, node_color=list(partition.values()))
     nx.draw_networkx_labels(G, pos, labels, font_weight="bold", horizontalalignment="left", verticalalignment='top', font_color= "#FF6600")
-    plt.savefig("Graph20210909.png", format="png", bbox_inches='tight')
+    plt.savefig(default_dest_file, format="png", bbox_inches='tight')
     #print(G)
 
 if __name__ == '__main__':

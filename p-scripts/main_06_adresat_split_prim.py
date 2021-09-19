@@ -35,9 +35,9 @@ def main():
 
     parser = argparse.ArgumentParser(prog='Personalii convert', description='Extract personalies into another column and/or modify them')
     parser.add_argument('infile',  type=argparse.FileType('r', encoding='utf-8'), nargs='?',
-                    help='csv file for processing', default="../data/muratova_res.csv")
+                    help='csv file for processing', default=default_source_file)
     parser.add_argument('outfile', type=argparse.FileType('w', encoding='utf-8'), nargs='?',
-                    help='csv file for output', default="../data/muratova_res2.csv")
+                    help='csv file for output', default=default_dest_file)
     args = parser.parse_args()
     infile=args.infile.name
     outfile=args.outfile.name

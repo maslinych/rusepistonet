@@ -19,11 +19,11 @@ def main():
 
     parser = argparse.ArgumentParser(prog='Personalii convert', description='Write found wikidata ids')
     parser.add_argument('infile',  type=argparse.FileType('r', encoding='utf-8'), nargs='?',
-                    help='csv file for processing', default="../data/muratova_res6.csv")
+                    help='csv file for processing', default=default_source_file)
     parser.add_argument('infile_wikidata',  type=argparse.FileType('r', encoding='utf-8'), nargs='?',
-                    help='file with persons with wikidata ids', default="../data/persons_table_wikidata.csv")
+                    help='file with persons with wikidata ids', default=default_persons_file)
     parser.add_argument('outfile', type=argparse.FileType('w', encoding='utf-8'), nargs='?',
-                    help='csv file for output', default="../data/muratova_res7.csv")
+                    help='csv file for output', default=default_dest_file)
     args = parser.parse_args()
     infile_data=args.infile.name
     infile_wikidata=args.infile_wikidata.name
