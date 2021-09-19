@@ -23,6 +23,12 @@ def extract_data_person(_celldata):
             
         if prim:
             prim=prim.strip()
+            square_parentesis=re.search(r'^\[.+\]$',prim)
+            prim=re.sub(r'[\(\[\]\)]','',prim)
+            if square_parentesis and len(prim)>4:
+                tmp=person
+                person=prim
+                prim=tmp
 
         return { rescols[0]: person, 
                 rescols[1]: prim}

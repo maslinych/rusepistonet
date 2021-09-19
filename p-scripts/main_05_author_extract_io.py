@@ -33,9 +33,10 @@ def extract_data_person(_celldata):
     search.append(re.search(r'^(?P<IO>[А-ЯЁ][а-яё\-]*?\. [А-ЯЁ][а-яё\-]*?\.) (?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+)$',_celldata)) # I. O. Fam
     search.append(re.search(r'^(?P<IO>[А-ЯЁ][а-яё\-]*?\.-[А-ЯЁ][а-яё\-]*?\.) (?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+)$',_celldata)) # I.-O. Fam
     search.append(re.search(r'^(?P<IO>[А-ЯЁ][а-яё\-]*? [А-ЯЁ][а-яё\-]*?\.) (?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+)$',_celldata)) # Fullname O. Fam
-    search.append(re.search(r'^(?P<IO>.*? де) (?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+)$',_celldata)) # Fullname де Fam // Гюи де Мопассану
-    search.append(re.search(r'^(?P<IO>.*? фон) (?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+)$',_celldata)) # I. фон Fam // К. фон Полю
-    search.append(re.search(r'^(?P<IO>.*? фон-дер) (?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+)$',_celldata)) # I. фон-дер Fam // А. Ф. фон-дер Бригену
+    search.append(re.search(r'^(?P<IO>.*?) (?P<FAM>де [А-ЯЁ][А-ЯЁа-яё\-]+)$',_celldata)) # Fullname де Fam // Гюи де Мопассану
+    search.append(re.search(r'^(?P<IO>.*?) (?P<FAM>фон [А-ЯЁ][А-ЯЁа-яё\-]+)$',_celldata)) # I. фон Fam // К. фон Полю
+    search.append(re.search(r'^(?P<IO>.*?) (?P<FAM>фон-[А-ЯЁ][А-ЯЁа-яё\-]+)$',_celldata)) # I. фон-Fam // Г. А. фон-Щверину
+    search.append(re.search(r'^(?P<IO>.*?) (?P<FAM>фон-дер [А-ЯЁ][А-ЯЁа-яё\-]+)$',_celldata)) # I. фон-дер Fam // А. Ф. фон-дер Бригену
     search.append(re.search(r'^(?P<IO>[А-ЯЁ][а-яё\-]*?\.) (?P<FAM>[А-ЯЁ][А-ЯЁа-яё\-]+)$',_celldata)) # I. Fam
     search.append(re.search(r'^(?P<IO>[А-ЯЁ][а-яё\-]*?\. [А-ЯЁ][а-яё\-]*?\.)$',_celldata)) # I. O.
     search.append(re.search(r'^(?P<IO>[А-ЯЁ][а-яё\-]*?\. [А-ЯЁ][а-яё\-]*?\. [А-ЯЁ][а-яё\-]*?\.)$',_celldata)) # I. O. O.
