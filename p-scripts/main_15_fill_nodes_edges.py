@@ -2,6 +2,7 @@ import logging
 import sys
 import csv
 import argparse
+import re
 
 # сохраняем в отдельный файлы сформированные грани и ноды для графа
 
@@ -15,6 +16,8 @@ default_dest_file = '../data/muratova_edgelist_res15.csv'
 # Логирование в utf-8 для отладки
 logging.basicConfig(
     handlers=[logging.StreamHandler(sys.stdout)], level=logging.INFO)
+
+exclude_list=['неизвест','неустановл','родные','родным','аноним', 'вяземские']
 
 def main():
     parser = argparse.ArgumentParser(prog='Fill nodes and edges', description='Fill nodes and edges')
@@ -49,7 +52,7 @@ def main():
     for line in ltable:
         if not line['auth_wikidataid'] or not line['dest_wikidataid']:
             continue
-        if 'еизвест' in line["адресатИП"] or 'еустановл' in line["адресатИП"]:
+        if  any(re.search(x,line["адресатИП"],re.IGNORECASE) for x in exclude_list):
             continue
         edge = line['auth_wikidataid']+line['dest_wikidataid']
         rev_edge = line['dest_wikidataid']+line['auth_wikidataid']
@@ -69,7 +72,7 @@ def main():
                 edgetable[rev_edge]['weight']=edgetable[rev_edge]['weight']+1
     # print(edgetable)
 
-    with open(outfile, 'w', encoding='utf-8') as outfile:
+    with open(outfile, 'w', encoding='utf-8', newline='') as outfile:
         fieldnames = ['auth_wikidataid', 'dest_wikidataid', 'auth_fio_short', 'dest_fio_short', 'weight']
         writer = csv.DictWriter(outfile, fieldnames=fieldnames, delimiter=';', quoting=csv.QUOTE_NONNUMERIC)
         writer.writeheader()

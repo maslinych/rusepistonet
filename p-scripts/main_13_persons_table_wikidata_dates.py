@@ -4,6 +4,8 @@
 
 # добавляем дату рождения и смерти из wikidata
 
+#pip3 install requests
+
 import re
 import logging
 import time
