@@ -1,10 +1,15 @@
+#deps:
+# networkx
+# matplotlib
+# python-louvain
+
 import logging
 import sys
 import csv
 import argparse
 import networkx as nx
 import matplotlib.pyplot as plt
-import community
+import community 
 from math import sqrt
 from datetime import datetime
 
@@ -15,7 +20,7 @@ from datetime import datetime
 #%config InlineBackend.figure_format = 'svg'
 #plt.rcParams['figure.figsize'] = (10, 6)
 
-default_edgelist_file = '../data/muratova_res14.csv'
+default_edgelist_file = '../data/muratova_edgelist_res15.csv'
 default_persons_file = '../data/persons_table_res13.csv'
 default_dest_file = "Graph_16_3_"+datetime.now().strftime("%Y-%d-%m-%H-%M-%S")+".png"
 

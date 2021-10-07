@@ -15,7 +15,7 @@ from datetime import datetime
 #%config InlineBackend.figure_format = 'svg'
 #plt.rcParams['figure.figsize'] = (10, 6)
 
-default_edgelist_file = '../data/muratova_res14.csv'
+default_edgelist_file = '../data/muratova_edgelist_res15.csv'
 default_persons_file = '../data/persons_table_res13.csv'
 default_dest_file = "Graph_16_3_"+datetime.now().strftime("%Y-%d-%m-%H-%M-%S")+".png"
 
@@ -120,9 +120,9 @@ def _position_nodes(g, partition, **kwargs):
 def main():
     parser = argparse.ArgumentParser(prog='Fill nodes and edges', description='Fill nodes and edges')
     parser.add_argument('infile',  type=argparse.FileType('r', encoding='utf-8'), nargs='?',
-                    help='csv file for processing', default="../data/muratova_edgelist.csv")
+                    help='csv file for processing', default=default_edgelist_file)
     parser.add_argument('infile2',  type=argparse.FileType('r', encoding='utf-8'), nargs='?',
-                    help='csv file 2 for processing', default="../data/persons_table_wikidata.csv")
+                    help='csv file 2 for processing', default=default_persons_file)
     args = parser.parse_args()
     infile_data = args.infile.name
     infile2_data = args.infile2.name
