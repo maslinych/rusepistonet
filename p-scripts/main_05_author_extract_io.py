@@ -74,10 +74,10 @@ def main():
     infile=args.infile.name
     outfile=args.outfile.name
 
-    with open(infile, newline='', encoding='utf-8') as datafile:
+    with open(infile, newline='', encoding='utf-8', newline='') as datafile:
         reader = csv.DictReader(datafile, delimiter=';')
         res_fieldnames=reader.fieldnames+rescols
-        with open(outfile, "w", newline='', encoding='utf-8') as resfile:
+        with open(outfile, "w", newline='', encoding='utf-8', newline='') as resfile:
             writer = csv.DictWriter(resfile, fieldnames=res_fieldnames, delimiter=';', quoting=csv.QUOTE_NONNUMERIC)
             writer.writeheader()
         for line in reader:

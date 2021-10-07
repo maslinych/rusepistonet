@@ -9,7 +9,7 @@ def main():
     ptable = []
     for csv_file in glob.glob("*.csv"):
         print(csv_file)
-        with open(csv_file, newline='', encoding='utf-8') as datafile:
+        with open(csv_file, newline='', encoding='utf-8', newline='') as datafile:
             reader = csv.DictReader(datafile, delimiter=';')
             for line in reader:
                 line["filename"]=csv_file
@@ -25,7 +25,7 @@ def main():
            if publ not in publications_list:
             publications_list.append(publ)
     print(publications_list)
-    with open("publications_list.txt", "w", newline='', encoding='utf-8') as resfile:
+    with open("publications_list.txt", "w", encoding='utf-8', newline='') as resfile:
         resfile.write("\n".join(publications_list))
 if __name__ == '__main__':
     main()

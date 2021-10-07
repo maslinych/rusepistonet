@@ -41,17 +41,17 @@ def main():
     infile=args.infile.name
     outfile=args.outfile.name
 
-    with open(infile, newline='', encoding='utf-8') as datafile:
+    with open(infile, encoding='utf-8', newline='') as datafile:
         reader = csv.DictReader(datafile, delimiter=';')
         res_fieldnames=reader.fieldnames
-        with open(outfile, "w", newline='', encoding='utf-8') as resfile:
+        with open(outfile, "w", encoding='utf-8', newline='') as resfile:
             writer = csv.DictWriter(resfile, fieldnames=res_fieldnames, delimiter=';', quoting=csv.QUOTE_NONNUMERIC)
             writer.writeheader()
         for line in reader:
             for cell_name,cell_value in line.items():
                 res_cell=replace_lat_rus(cell_value)
                 line.update({cell_name:res_cell})
-            with open(outfile, "a", newline='', encoding='utf-8') as resfile:
+            with open(outfile, "a", encoding='utf-8', newline='') as resfile:
                 writer = csv.DictWriter(resfile, fieldnames=res_fieldnames, delimiter=';', quoting=csv.QUOTE_NONNUMERIC)
                 writer.writerow(line)
 

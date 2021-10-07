@@ -76,7 +76,7 @@ def main():
     infile = args.infile.name
     outfile = args.outfile.name
 
-    with open(infile, newline='', encoding='utf-8') as datafile:
+    with open(infile, encoding='utf-8', newline='') as datafile:
         # newline='' - для корректного определения новой строки
         reader = csv.DictReader(datafile, delimiter=';')
         res_fieldnames = [rescountcol, residcol]+reader.fieldnames+rescols

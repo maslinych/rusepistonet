@@ -42,10 +42,10 @@ def main():
     infile=args.infile.name
     outfile=args.outfile.name
 
-    with open(infile, newline='', encoding='utf-8') as datafile:
+    with open(infile, encoding='utf-8', newline='') as datafile:
         reader = csv.DictReader(datafile, delimiter=';')
         res_fieldnames=reader.fieldnames+rescols
-        with open(outfile, "w", newline='', encoding='utf-8') as resfile:
+        with open(outfile, "w", encoding='utf-8', newline='') as resfile:
             writer = csv.DictWriter(resfile, fieldnames=res_fieldnames, delimiter=';', quoting=csv.QUOTE_NONNUMERIC)
             writer.writeheader()
         for line in reader:
@@ -56,7 +56,7 @@ def main():
                 extracted_data=[""]
             for one_data in extracted_data:
                 line.update({rescols[0]:one_data})
-                with open(outfile, "a", newline='', encoding='utf-8') as resfile:
+                with open(outfile, "a", encoding='utf-8', newline='') as resfile:
                     writer = csv.DictWriter(resfile, fieldnames=res_fieldnames, delimiter=';', quoting=csv.QUOTE_NONNUMERIC)
                     writer.writerow(line)
 
