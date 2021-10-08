@@ -235,24 +235,33 @@ def main():
     for node in G.nodes():
         if betweennessCentrality[node] >= 0.005:
             labels[node]=node
+    for node in G.nodes():
+        nodes_colors[node] = G.nodes[node]['birthdate']
     for u,v,a in G.edges(data=True):
         if a['weight'] > 10 or u==v:
             labels[u] = u
             labels[v] = v
-        if not safe_list_get(nodes_colors, u, False):
-            nodes_colors[u] = G.nodes[u]['birthdate']
-        if not safe_list_get(nodes_colors, v, False):
-            nodes_colors[v] = G.nodes[v]['birthdate']
-    nx.draw_networkx_edges(G, pos, alpha=0.45, width=weights, edge_color='k')
+    #nx.draw_networkx_edges(G, pos, alpha=0.45, width=weights, edge_color='k')
     #edges = nx.draw_networkx_edges(G, pos, alpha=0.45, width=weights, edge_cmap=plt.cm.cool, edge_vmin=0, edge_vmax=10, edge_color=edgecolor)
     #edges = nx.draw_networkx_edges(G, pos, alpha=0.6, width=weights, edge_cmap=cm.tab10, edge_color=edgecolor)
     #nx.draw_networkx_nodes(G, pos, node_size=node_size, cmap=plt.cm.viridis, node_color=list(nodes_colors.values()))
     #nx.draw_networkx_nodes(G, pos, node_size=node_size, cmap=plt.cm.viridis, node_color=list(partition.values()))
+    #nodes = nx.draw_networkx_nodes(G, pos, node_size=node_size, cmap=plt.cm.tab20, node_color=list(nodes_colors.values()))
+    #nx.draw_networkx_labels(G, pos, labels, font_weight="bold", horizontalalignment="left", verticalalignment='top', font_color= "#ff2f00")
+    #plt.colorbar(edges, fraction=0.05)
+    #plt.colorbar(nodes)
+
+    edges = nx.draw_networkx_edges(G, pos, alpha=0.6, width=weights, edge_cmap=cm.tab10, edge_color=edgecolor)
+    nx.draw_networkx_nodes(G, pos, node_size=node_size, cmap=plt.cm.viridis, node_color=list(partition.values()))
+    nx.draw_networkx_labels(G, pos, labels, font_weight="bold", horizontalalignment="left", verticalalignment='top', font_color= "#ff2f00")
+    plt.colorbar(edges)
+    plt.savefig('agediff_'+default_dest_file, format="png", bbox_inches='tight')
+    plt.clf()
+    nx.draw_networkx_edges(G, pos, alpha=0.45, width=weights, edge_color='k')
     nodes = nx.draw_networkx_nodes(G, pos, node_size=node_size, cmap=plt.cm.tab20, node_color=list(nodes_colors.values()))
     nx.draw_networkx_labels(G, pos, labels, font_weight="bold", horizontalalignment="left", verticalalignment='top', font_color= "#ff2f00")
-    #plt.colorbar(edges, fraction=0.05)
     plt.colorbar(nodes)
-    plt.savefig(default_dest_file, format="png", bbox_inches='tight')
+    plt.savefig('birthdates_'+default_dest_file, format="png", bbox_inches='tight')
     #print(G)
 
 if __name__ == '__main__':
