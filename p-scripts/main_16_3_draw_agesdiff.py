@@ -19,7 +19,7 @@ from datetime import datetime
 
 default_edgelist_file = '../data/muratova_edgelist_res15.csv'
 default_persons_file = '../data/persons_table_res13.csv'
-default_dest_file = "Graph_16_3_"+datetime.now().strftime("%Y-%d-%m-%H-%M-%S")+".png"
+default_dest_file = "Graph_16_3_"+datetime.now().strftime("%Y-%m-%d-%H-%M-%S")+".png"
 
 # Логирование в utf-8 для отладки
 logging.basicConfig(
