@@ -46,7 +46,7 @@ def main():
     infile=args.infile.name
     outfile=args.outfile.name
 
-    with open(infile, newline='', encoding='utf-8', newline='') as datafile:
+    with open(infile, encoding='utf-8', newline='') as datafile:
         reader = csv.DictReader(datafile, delimiter=';')
         res_fieldnames=reader.fieldnames+rescols
         with open(outfile, "w", newline='', encoding='utf-8') as resfile:

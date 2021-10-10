@@ -17,14 +17,14 @@ import os
 from import_exclusions import exclusions_phrase, exclusions_word
 
 from requests import get
-import wikidata_query
+#import wikidata_query
 
 # Логирование в utf-8 для отладки
 logging.basicConfig(
     handlers=[logging.StreamHandler(sys.stdout)], level=logging.INFO)
 
 default_source_file = '../data/muratova_res10.csv'
-default_dest_file = '../data/persons_table_res11.csv"'
+default_dest_file = '../data/persons_table_res11.csv'
 # столбцы со строками для обработки
 sourcecols = ['автор', 'адресат_ио', 'адресатИП', 'фамилия_неделимо']
 #rescols = ['authorwikidataurl', 'authorwikidataid', 'adrwikidataurl',

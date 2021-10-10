@@ -197,11 +197,12 @@ def main():
             mult=re.search(r'[ыи]м$',line[sourcecols[2]])
             if mult:
                 to_search = f"{line[sourcecols[2]][:-2]}* {line[sourcecols[3]]}"
-            stopword=re.search(r'[«»]', line[sourcecols[2]])
+            stopword=re.search(r'[«»\?]', line[sourcecols[2]])
             unknown=re.search(r'еизвес', line[sourcecols[2]])
+            notinitials=not re.search(r'[а-яa-z]', line[sourcecols[2]])
            
             row['wikidata_id'], row['wikidata_url'] = ['','']
-            if (len(to_search)>2) and not (stopword or unknown):
+            if (len(to_search)>2) and not (stopword or unknown or notinitials):
                 search_res = get_qnumbers(to_search)
                 if search_res:
                     row['wikidata_id'], row['wikidata_url'] = select_entity(search_res)

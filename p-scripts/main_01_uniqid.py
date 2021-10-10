@@ -16,7 +16,6 @@ sourcecol = 'персоналии'  # столбец со строками дл�
 # столбцы, куда надо будет записать данные
 rescols = ['адресат', 'количество писем', 'даты']
 sourceidcol = ['автор', sourcecol]
-residcol = 'id_переписки'
 rescountcol = 'номер в списке'
 
 counter = 0
@@ -49,14 +48,6 @@ def extract_data(_celldata):
                 rescols[1]: "",
                 rescols[2]: ""}
 
-
-def generate_string_id(_input_str):
-    global counter
-    salt = uuid.uuid4().hex
-    hash_obj = hashlib.sha1(salt.encode()+_input_str.encode())
-    return hash_obj.hexdigest()
-
-
 def count_all():
     global counter
     counter = counter + 1
@@ -79,7 +70,7 @@ def main():
     with open(infile, encoding='utf-8', newline='') as datafile:
         # newline='' - для корректного определения новой строки
         reader = csv.DictReader(datafile, delimiter=';')
-        res_fieldnames = [rescountcol, residcol]+reader.fieldnames+rescols
+        res_fieldnames = [rescountcol]+reader.fieldnames+rescols
         with open(outfile, "w", newline='', encoding='utf-8') as resfile:
             writer = csv.DictWriter(
                 resfile, fieldnames=res_fieldnames, delimiter=';', quoting=csv.QUOTE_NONNUMERIC)
@@ -100,8 +91,7 @@ def main():
             for p in sourceidcol:
                 idsource = ":" + idsource + line[p]
 
-            idres = generate_string_id(idsource)
-            line.update({rescountcol: count_all(), residcol: idres})
+            line.update({rescountcol: count_all()})
 
             with open(outfile, "a", newline='', encoding='utf-8') as resfile:
                 writer = csv.DictWriter(
