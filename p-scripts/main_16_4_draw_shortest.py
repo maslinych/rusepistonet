@@ -19,7 +19,7 @@ from datetime import datetime
 
 default_edgelist_file = '../data/muratova_edgelist_res15.csv'
 default_persons_file = '../data/persons_table_res13.csv'
-default_dest_file = "Graph_16_3_"+datetime.now().strftime("%Y-%m-%d-%H-%M-%S")+".svg"
+default_dest_file = "Graph_16_4_"+datetime.now().strftime("%Y-%m-%d-%H-%M-%S")+".svg"
 
 # Логирование в utf-8 для отладки
 logging.basicConfig(
@@ -187,13 +187,13 @@ def main():
     #    H.add_edges_from(edge)
 
     #H = G.subgraph(next(nx.connected_components(G)))
-    degree = G.degree()
-    to_remove = [n for (n,deg) in degree if deg <= 1]
-    while to_remove:
-        G.remove_nodes_from(to_remove)
-        degree = G.degree()
-        to_remove = [n for (n,deg) in degree if deg <= 1]
-    
+                    # degree = G.degree()
+                    # to_remove = [n for (n,deg) in degree if deg <= 1]
+                    # while to_remove:
+                    #     G.remove_nodes_from(to_remove)
+                    #     degree = G.degree()
+                    #     to_remove = [n for (n,deg) in degree if deg <= 1]
+                    
  
     #paths=nx.all_simple_paths(G,"Пушкин, А. С.", "Тургенев, И.С.", cutoff=3)
     #print(list(paths))
@@ -202,20 +202,25 @@ def main():
     #        G[u][v]["weight"]=2
   
     #initialpos = {mapping['Q7200']:(-250,-250), mapping['Q42831']:(250,250)}
-    betweennessCentrality = nx.betweenness_centrality(G,normalized=True, endpoints=True)
-    node_size =  [v * 10000 for v in betweennessCentrality.values()]
+    #betweennessCentrality = nx.betweenness_centrality(G,normalized=True, endpoints=True)
+    #node_size =  [v * 10000 for v in betweennessCentrality.values()]
+    #shortest_path = nx.shortest_path(G)
+
+    c_closeness = nx.closeness_centrality(G)
+    c_closeness = list(c_closeness.values())
+
     #pos = nx.spring_layout(G, seed=367, iterations=300, pos = initialpos, k=70/sqrt(len(G)))
     #pos = nx.spring_layout(H, seed=367, iterations=300, pos = initialpos)#, k=10/sqrt(len(G)))
     #pos = nx.kamada_kawai_layout(G)
     #pos = nx.spectral_layout(G)
     partition = community.best_partition(G, random_state=367, resolution=3)
-    ###pos = nx.spring_layout(G, seed=367, iterations=300, pos = initialpos, k=90/sqrt(len(G)))
-    pos = community_layout(G, partition)
+    pos = nx.spring_layout(G, seed=367, iterations=30, k=180/sqrt(G.order()))
+    #pos = community_layout(G, partition)
     #nx.draw_networkx(G, pos=pos, node_size=node_size, **options)
     #nx.draw(H, pos, **options)
 
     weights = [G[u][v]['weight']/15 for u,v in G.edges()]
-    edgecolor = [G[u][v]['agediff'] if G[u][v]['agediff'] > 4 else 0 for u,v in G.edges()]
+    #edgecolor = [G[u][v]['agediff'] if G[u][v]['agediff'] > 4 else 0 for u,v in G.edges()]
     # edgecolor=[]
     # for u,v in G.edges():
     #     if G[u][v]['agediff']>=0 and G[u][v]['agediff'] < 6:
@@ -233,14 +238,14 @@ def main():
     nodes_colors = {}
     labels={}
     for node in G.nodes():
-        if betweennessCentrality[node] >= 0.005:
-            labels[node]=node
-    for node in G.nodes():
-        nodes_colors[node] = G.nodes[node]['birthdate']
-    for u,v,a in G.edges(data=True):
-        if a['weight'] > 10 or u==v:
-            labels[u] = u
-            labels[v] = v
+        #if betweennessCentrality[node] >= 0.005:
+        labels[node]=node
+    #for node in G.nodes():
+    #    nodes_colors[node] = G.nodes[node]['birthdate']
+    # for u,v,a in G.edges(data=True):
+    #     if a['weight'] > 10 or u==v:
+    #         labels[u] = u
+    #         labels[v] = v
     #nx.draw_networkx_edges(G, pos, alpha=0.45, width=weights, edge_color='k')
     #edges = nx.draw_networkx_edges(G, pos, alpha=0.45, width=weights, edge_cmap=plt.cm.cool, edge_vmin=0, edge_vmax=10, edge_color=edgecolor)
     #edges = nx.draw_networkx_edges(G, pos, alpha=0.6, width=weights, edge_cmap=cm.tab10, edge_color=edgecolor)
@@ -251,18 +256,13 @@ def main():
     #plt.colorbar(edges, fraction=0.05)
     #plt.colorbar(nodes)
 
-    edges = nx.draw_networkx_edges(G, pos, alpha=0.6, width=weights, edge_cmap=cm.tab10, edge_color=edgecolor)
-    nx.draw_networkx_nodes(G, pos, node_size=node_size, cmap=plt.cm.viridis, node_color=list(partition.values()))
-    nx.draw_networkx_labels(G, pos, labels, font_weight="bold", horizontalalignment="left", verticalalignment='top', font_color= "#ff2f00")
-    plt.colorbar(edges)
-    plt.savefig('agediff_'+default_dest_file, format="svg", dpi=300, bbox_inches='tight')
-    plt.clf()
-    nx.draw_networkx_edges(G, pos, alpha=0.45, width=weights, edge_color='k')
-    nodes = nx.draw_networkx_nodes(G, pos, node_size=node_size, cmap=plt.cm.tab20, node_color=list(nodes_colors.values()))
-    nx.draw_networkx_labels(G, pos, labels, font_weight="bold", horizontalalignment="left", verticalalignment='top', font_color= "#ff2f00")
+#nx.draw(G_karate, cmap = plt.get_cmap('inferno'), node_color = c_closeness, node_size=300, pos=pos, with_labels=True)
+
+    edges = nx.draw_networkx_edges(G, pos, alpha=0.6, width=weights, edge_cmap=cm.tab10)#, edge_color=edgecolor)
+    nodes = nx.draw_networkx_nodes(G, pos, node_size=300, cmap=plt.get_cmap('inferno'), node_color=c_closeness)
+    nx.draw_networkx_labels(G, pos, labels, font_weight="normal", horizontalalignment="left", verticalalignment='top', font_color= "#2E86C1")
     plt.colorbar(nodes)
-    plt.savefig('birthdates_'+default_dest_file, format="svg", dpi=300, bbox_inches='tight')
-    #print(G)
+    plt.savefig('closeness_'+default_dest_file, format="svg", dpi=200, bbox_inches='tight')
 
 if __name__ == '__main__':
     main()

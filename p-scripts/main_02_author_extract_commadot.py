@@ -10,8 +10,8 @@ import argparse
 
 default_source_file = '../data/muratova_res01.csv'
 default_dest_file = '../data/muratova_res02.csv'
-sourcecol = 'автор' # Столбец со строками для обработки
-rescols = ['автор_тчкзпт'] # столбцы куда надо будет записать данные
+sourcecol = 'author' # Столбец со строками для обработки
+rescols = ['author_semicolon'] # столбцы куда надо будет записать данные
 
 def extract_data_person2(_celldata):
     commadot=_celldata.split(';')

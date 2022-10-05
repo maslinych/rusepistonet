@@ -9,8 +9,8 @@ import argparse
 
 default_source_file = '../data/muratova_res02.csv'
 default_dest_file = '../data/muratova_res04.csv'
-sourcecol = 'автор_тчкзпт' # Столбец со строками для обработки
-rescols = ['автор_имя', 'автор_примечание'] # столбцы куда надо будет записать данные
+sourcecol = 'author_semicolon' # Столбец со строками для обработки
+rescols = ['author_name', 'author_note'] # столбцы куда надо будет записать данные
 
 def extract_data_person(_celldata):
     res_cell=re.search(r'^(.*?)([\(\[].*[\]\)])?$',_celldata, re.IGNORECASE)

@@ -9,8 +9,8 @@ import argparse
 
 default_source_file = '../data/muratova_res08.csv'
 default_dest_file = '../data/muratova_res09.csv'
-sourcecol = 'адресат_одиночн' # Столбец со строками для обработки
-rescols = ['адресат_ио','фамилия_неделимо'] # столбцы куда надо будет записать данные
+sourcecol = 'personalities_single' # Столбец со строками для обработки
+rescols = ['personalities_author_name_patr','personalities_impartible'] # столбцы куда надо будет записать данные
 
 def extract_data_person(_celldata):
     search=[]
