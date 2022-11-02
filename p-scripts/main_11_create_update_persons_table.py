@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# coding: utf-8
 # Зависимости
 # Python 3.8 https://www.python.org/downloads/
 # qwikidata
@@ -30,7 +32,7 @@ sourcecols = ['author_semicolon', 'personalities_author_name_patr', 'personaliti
 #rescols = ['authorwikidataurl', 'authorwikidataid', 'adrwikidataurl',
            #'adrwikidataid']  # столбцы, куда надо будет записать данные
 
-rescols = ['source', 'fam', 'io', 'io_short', 'fam_single', 'fam_orig', 'fio_full', 'fio_short', 'wikidata_id','wikidata_url']
+rescols = ['source', 'fam', 'io', 'io_short', 'fam_single', 'fam_orig', 'fio_full', 'fio_short', 'wikidata_id','wikidata_url','ideology']
 
 # Запуск анализатора морф
 morph = pymorphy2.MorphAnalyzer()

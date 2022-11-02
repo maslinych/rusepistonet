@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# coding: utf-8
 # Зависимости
 # Python 3.8 https://www.python.org/downloads/
 
@@ -10,7 +12,7 @@ import argparse
 import hashlib
 import uuid
 
-default_source_file = '../data/muratova.csv'
+default_source_file = '../data/20221001_muratova_with_letters_numbers.csv'
 default_dest_file = '../data/muratova_res01.csv'
 sourcecol = 'personalities'  # столбец со строками для обработки
 # столбцы, куда надо будет записать данные

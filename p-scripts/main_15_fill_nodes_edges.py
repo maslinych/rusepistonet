@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# coding: utf-8
 import logging
 import sys
 import csv
@@ -52,7 +54,7 @@ def main():
     for line in ltable:
         if not line['auth_wikidataid'] or not line['dest_wikidataid']:
             continue
-        if  any(re.search(x,line["адресатИП"],re.IGNORECASE) for x in exclude_list):
+        if  any(re.search(x,line["personalities_nominative"],re.IGNORECASE) for x in exclude_list):
             continue
         edge = line['auth_wikidataid']+line['dest_wikidataid']
         rev_edge = line['dest_wikidataid']+line['auth_wikidataid']

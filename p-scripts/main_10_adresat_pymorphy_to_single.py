@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# coding: utf-8
 # Зависимости
 # Python 3.8 https://www.python.org/downloads/
 # pip install pymorphy2
