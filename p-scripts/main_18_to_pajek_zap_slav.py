@@ -95,7 +95,7 @@ def main():
     #         edge['dest_fio_short'] = mapping[edge['dest_wikidataid']]
     #         writer.writerow(edge)
     writer = PajekWriter(df,
-                     directed=True,
+                     directed=False,
                      weighted=True,
                      citing_colname="auth_fio_short",
                      cited_colname="dest_fio_short",

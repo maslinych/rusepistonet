@@ -17,7 +17,7 @@ run_sequence=[
 "main_12_persons_table_wikidata_ids.py",
 "main_13_persons_table_wikidata_dates.py",
 "main_14_insert_wikidata_to_csv.py",
-"main_15_fill_nodes_edges.py"
+"main_18_to_pajek_zap_slav_split_by_date.py"
 ]
 
 def main():

@@ -46,13 +46,16 @@ def main():
             writer.writeheader()
         for line in reader:
             d=next((item for item in ptable if (
-                (line["author"] == item["source"]) or (line["author"] == item["fio_full"]) or (line["author"] == item["fio_short"])
+                (line["author"] == item["source"]) or (line["author"] == item["fio_full"]) or (line["author_name"] == item["source"]) or (line["author_name"] == item["fio_full"]) or (line["author_name"] == item["fio_short"])
                 and item["wikidata_id"]
                 )
                 ), None)
             if d:
                 line.update({rescols[0]:d['wikidata_id']})
                 line.update({rescols[1]:d['wikidata_url']})
+            else:
+                print(line)
+                #exit(1)
 
 
             dest = line[csv_source_cols[2]].strip()
@@ -69,6 +72,9 @@ def main():
             if d:
                 line.update({rescols[2]:d['wikidata_id']})
                 line.update({rescols[3]:d['wikidata_url']})
+            else:
+                print(line)
+                #exit(1)
             with open(outfile, "a", newline='', encoding='utf-8') as resfile:
                     writer = csv.DictWriter(resfile, fieldnames=res_fieldnames, delimiter=';', quoting=csv.QUOTE_NONNUMERIC)
                     writer.writerow(line)
