@@ -1,0 +1,9 @@
+[packages]
+pymorphy2 = "*"
+pymorphy2-dicts-ru = "*"
+python-dateutil = "*"
+requests = "*"
+networkx = "*"
+community = "*"
+matplotlib = "*"
+pandas = "*"

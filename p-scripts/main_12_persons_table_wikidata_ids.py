@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# coding: utf-8
 # Зависимости
 # Python 3.8 https://www.python.org/downloads/
 # qwikidata
@@ -187,7 +189,13 @@ def main():
             row = line
             to_search = ''
             dup=None
-            dup=next((item for item in ptable if line["source"] == item["source"]), None)
+            # dup=next((item for item in ptable if line["source"] == item["source"]), None)
+            for item in ptable:
+                if line["source"] == item["source"]:
+                    dup=True
+                    for key in item:
+                        if key in line and not item[key] and line[key]:
+                            item[key]=line[key]
             if dup:
                 continue
             if line[sourcecols[0]]:

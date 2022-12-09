@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# coding: utf-8
 # Зависимости
 # Python 3.8 https://www.python.org/downloads/
 
@@ -10,13 +12,13 @@ import argparse
 import hashlib
 import uuid
 
-default_source_file = '../data/muratova.csv'
+default_source_file = '../data/20221001_muratova_with_letters_numbers.csv'
 default_dest_file = '../data/muratova_res01.csv'
-sourcecol = 'персоналии'  # столбец со строками для обработки
+sourcecol = 'personalities'  # столбец со строками для обработки
 # столбцы, куда надо будет записать данные
-rescols = ['адресат', 'количество писем', 'даты']
-sourceidcol = ['автор', sourcecol]
-rescountcol = 'номер в списке'
+rescols = ['personalities_dest', 'personalities_lett_count', 'personalities_dates']
+sourceidcol = ['author', sourcecol]
+rescountcol = 'letter_number'
 
 counter = 0
 
@@ -70,7 +72,12 @@ def main():
     with open(infile, encoding='utf-8', newline='') as datafile:
         # newline='' - для корректного определения новой строки
         reader = csv.DictReader(datafile, delimiter=';')
-        res_fieldnames = [rescountcol]+reader.fieldnames+rescols
+        if rescountcol in reader.fieldnames:
+            shouldcount = False
+            res_fieldnames = reader.fieldnames+rescols
+        else:
+            shouldcount = True
+            res_fieldnames = [rescountcol]+reader.fieldnames+rescols
         with open(outfile, "w", newline='', encoding='utf-8') as resfile:
             writer = csv.DictWriter(
                 resfile, fieldnames=res_fieldnames, delimiter=';', quoting=csv.QUOTE_NONNUMERIC)
@@ -91,7 +98,8 @@ def main():
             for p in sourceidcol:
                 idsource = ":" + idsource + line[p]
 
-            line.update({rescountcol: count_all()})
+            if shouldcount:
+                line.update({rescountcol: count_all()})
 
             with open(outfile, "a", newline='', encoding='utf-8') as resfile:
                 writer = csv.DictWriter(

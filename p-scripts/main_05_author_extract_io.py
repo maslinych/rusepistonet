@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# coding: utf-8
 # Зависимости
 # Python 3.8 https://www.python.org/downloads/
 
@@ -9,8 +11,8 @@ import argparse
 
 default_source_file = '../data/muratova_res04.csv'
 default_dest_file = '../data/muratova_res05.csv'
-sourcecol = 'автор_имя' # Столбец со строками для обработки
-rescols = ['автор_ио','автор_неделимо'] # столбцы куда надо будет записать данные
+sourcecol = 'author_name' # Столбец со строками для обработки
+rescols = ['author_name_patr','author_impartible'] # столбцы куда надо будет записать данные
 
 def extract_data_person(_celldata):
     search=[]

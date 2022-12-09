@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# coding: utf-8
 # Зависимости
 # Python 3.8 https://www.python.org/downloads/
 
@@ -10,8 +12,8 @@ import argparse
 
 default_source_file = '../data/muratova_res07.csv'
 default_dest_file = '../data/muratova_res08.csv'
-sourcecol = 'адресат_имя' # Столбец со строками для обработки
-rescols = ['адресат_одиночн'] # столбцы куда надо будет записать данные
+sourcecol = 'personalities_name' # Столбец со строками для обработки
+rescols = ['personalities_single'] # столбцы куда надо будет записать данные
 
 def extract_data_person2(_celldata):
     res_persons=[]

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# coding: utf-8
 # Зависимости
 # Python 3.8 https://www.python.org/downloads/
 
@@ -12,7 +14,7 @@ default_persons_file = '../data/persons_table_res13.csv'
 default_dest_file = '../data/muratova_res14.csv'
 
 wikidata_table_sourcecols = ['source', 'fio_full', 'fio_short', 'wikidata', 'wikidata_url']
-csv_source_cols = ['автор', 'адресат_ио', 'адресатИП']
+csv_source_cols = ['author', 'personalities_author_name_patr', 'personalities_nominative']
 rescols = ['auth_wikidataid','auth_wikidata_url','dest_wikidataid','dest_wikidata_url'] 
 
 def main():
@@ -44,13 +46,16 @@ def main():
             writer.writeheader()
         for line in reader:
             d=next((item for item in ptable if (
-                (line["автор"] == item["source"]) or (line["автор"] == item["fio_full"]) or (line["автор"] == item["fio_short"])
+                (line["author"] == item["source"]) or (line["author"] == item["fio_full"]) or (line["author_name"] == item["source"]) or (line["author_name"] == item["fio_full"]) or (line["author_name"] == item["fio_short"])
                 and item["wikidata_id"]
                 )
                 ), None)
             if d:
                 line.update({rescols[0]:d['wikidata_id']})
                 line.update({rescols[1]:d['wikidata_url']})
+            else:
+                print(line)
+                #exit(1)
 
 
             dest = line[csv_source_cols[2]].strip()
@@ -67,6 +72,9 @@ def main():
             if d:
                 line.update({rescols[2]:d['wikidata_id']})
                 line.update({rescols[3]:d['wikidata_url']})
+            else:
+                print(line)
+                #exit(1)
             with open(outfile, "a", newline='', encoding='utf-8') as resfile:
                     writer = csv.DictWriter(resfile, fieldnames=res_fieldnames, delimiter=';', quoting=csv.QUOTE_NONNUMERIC)
                     writer.writerow(line)

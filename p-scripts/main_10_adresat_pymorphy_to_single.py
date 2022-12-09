@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# coding: utf-8
 # Зависимости
 # Python 3.8 https://www.python.org/downloads/
 # pip install pymorphy2
@@ -20,8 +22,8 @@ morph = pymorphy2.MorphAnalyzer()
 
 default_source_file = '../data/muratova_res09.csv'
 default_dest_file = '../data/muratova_res10.csv'
-sourcecol = 'фамилия_неделимо'  # столбец со строками для обработки
-rescols = ['адресатИП']  # столбцы, куда надо будет записать данные
+sourcecol = 'personalities_impartible'  # столбец со строками для обработки
+rescols = ['personalities_nominative']  # столбцы, куда надо будет записать данные
 
 # Поиск наличия хотя бы одного из тегов в списке тегов слова
 

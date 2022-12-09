@@ -19,7 +19,7 @@ from datetime import datetime
 
 default_edgelist_file = '../data/muratova_edgelist_res15.csv'
 default_persons_file = '../data/persons_table_res13.csv'
-default_dest_file = "Graph_16_3_"+datetime.now().strftime("%Y-%m-%d-%H-%M-%S")+".png"
+default_dest_file = "Graph_16_3_"+datetime.now().strftime("%Y-%m-%d-%H-%M-%S")+".svg"
 
 # Логирование в utf-8 для отладки
 logging.basicConfig(
@@ -255,13 +255,13 @@ def main():
     nx.draw_networkx_nodes(G, pos, node_size=node_size, cmap=plt.cm.viridis, node_color=list(partition.values()))
     nx.draw_networkx_labels(G, pos, labels, font_weight="bold", horizontalalignment="left", verticalalignment='top', font_color= "#ff2f00")
     plt.colorbar(edges)
-    plt.savefig('agediff_'+default_dest_file, format="png", bbox_inches='tight')
+    plt.savefig('agediff_'+default_dest_file, format="svg", dpi=300, bbox_inches='tight')
     plt.clf()
     nx.draw_networkx_edges(G, pos, alpha=0.45, width=weights, edge_color='k')
     nodes = nx.draw_networkx_nodes(G, pos, node_size=node_size, cmap=plt.cm.tab20, node_color=list(nodes_colors.values()))
     nx.draw_networkx_labels(G, pos, labels, font_weight="bold", horizontalalignment="left", verticalalignment='top', font_color= "#ff2f00")
     plt.colorbar(nodes)
-    plt.savefig('birthdates_'+default_dest_file, format="png", bbox_inches='tight')
+    plt.savefig('birthdates_'+default_dest_file, format="svg", dpi=300, bbox_inches='tight')
     #print(G)
 
 if __name__ == '__main__':
